@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resource/m_pButtonMin_hover.png</file>
+        <file>resource/m_pButtonMin_normal.png</file>
+        <file>resource/m_pButtonClose_normal.png</file>
+        <file>resource/m_pButtonClose_press.png</file>
+        <file>resource/m_pButtonMax_hover.png</file>
+        <file>resource/m_pButtonMax_normal.png</file>
+        <file>resource/m_pButtonMin_press.png</file>
+        <file>resource/m_pButtonRestore_hover.png</file>
+        <file>resource/m_pButtonRestore_normal.png</file>
+        <file>resource/m_pButtonRestore_press.png</file>
+        <file>resource/m_pButtonClose_hover.png</file>
+        <file>resource/m_pButtonMax_press.png</file>
+        <file>resource/pancake.png</file>
+        <file>resource/btn_add_friend_hover.png</file>
+        <file>resource/btn_add_friend_normal.png</file>
+        <file>resource/btn_add_friend_press.png</file>
+        <file>resource/btn_change_to_chat_hover.png</file>
+        <file>resource/btn_change_to_chat_normal.png</file>
+        <file>resource/btn_change_to_chat_press.png</file>
+        <file>resource/btn_change_to_friend_hover.png</file>
+        <file>resource/btn_change_to_friend_normal.png</file>
+        <file>resource/btn_change_to_friend_press.png</file>
+    </qresource>
+</RCC>
