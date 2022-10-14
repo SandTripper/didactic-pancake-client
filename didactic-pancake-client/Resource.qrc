@@ -22,5 +22,12 @@
         <file>resource/btn_change_to_friend_hover.png</file>
         <file>resource/btn_change_to_friend_normal.png</file>
         <file>resource/btn_change_to_friend_press.png</file>
+        <file>resource/btn_process_friend_requests_hover.png</file>
+        <file>resource/btn_process_friend_requests_normal.png</file>
+        <file>resource/btn_process_friend_requests_press.png</file>
+        <file>resource/SuspendedScrollbar/listwidget.qss</file>
+        <file>resource/SuspendedScrollbar/scrollbar.qss</file>
+        <file>resource/default_avatar.png</file>
+        <file>resource/red_point.png</file>
     </qresource>
 </RCC>

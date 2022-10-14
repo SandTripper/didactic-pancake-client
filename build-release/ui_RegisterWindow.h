@@ -53,11 +53,12 @@ public:
         edit_password1->setEchoMode(QLineEdit::Password);
         label = new QLabel(RegisterWindow);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(110, 40, 61, 31));
+        label->setGeometry(QRect(60, 30, 161, 51));
         QFont font1;
         font1.setFamily(QString::fromUtf8("Microsoft YaHei"));
         font1.setPointSize(22);
         label->setFont(font1);
+        label->setAlignment(Qt::AlignCenter);
         lbl_wrongtip = new QLabel(RegisterWindow);
         lbl_wrongtip->setObjectName(QString::fromUtf8("lbl_wrongtip"));
         lbl_wrongtip->setGeometry(QRect(30, 210, 151, 16));

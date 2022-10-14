@@ -17,30 +17,41 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    AddFriendWindow.cpp \
     BaseTitleBar.cpp \
     BaseWindow.cpp \
+    FriendRequestsWindow.cpp \
+    FriendRequsetsItem.cpp \
     LabelPlus.cpp \
     LoginWindow.cpp \
     RegisterWindow.cpp \
     SideBar.cpp \
     StatusBar.cpp \
+    SuspendedScrollbar.cpp \
     TcpConnect.cpp \
     main.cpp \
     CustomMainWindow.cpp
 
 HEADERS += \
+    AddFriendWindow.h \
     BaseTitleBar.h \
     BaseWindow.h \
     CustomMainWindow.h \
+    FriendRequestsWindow.h \
+    FriendRequsetsItem.h \
     LabelPlus.h \
     LoginWindow.h \
     RegisterWindow.h \
     SideBar.h \
     StatusBar.h \
+    SuspendedScrollbar.h \
     TcpConnect.h
 
 FORMS += \
+    AddFriendWindow.ui \
     CustomMainWindow.ui \
+    FriendRequestsWindow.ui \
+    FriendRequsetsItem.ui \
     LoginWindow.ui \
     RegisterWindow.ui \
     SideBar.ui \

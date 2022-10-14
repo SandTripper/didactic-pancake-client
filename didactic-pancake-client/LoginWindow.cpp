@@ -18,7 +18,6 @@ LoginWindow::LoginWindow(QWidget *parent) : BaseWindow(parent),
     m_connect = TcpConnect::getInstance();
 
     connect(m_connect, &TcpConnect::LGNpackAdd, this, &LoginWindow::checkLogin);
-    connect(ui->lbl_register, &LabelPlus::clicked, this, &LoginWindow::on_lbl_register_clicked);
 
     ui->setupUi(this);
 
@@ -147,23 +146,21 @@ void LoginWindow::on_btn_login_clicked()
     QByteArray ba = content.toLatin1();
     ctmp = ba.data();
 
-    m_connect->write_data(DataPacket(TcpConnect::LGN, ctmp, content.length()));
+    m_connect->write_data(DataPacket(TcpConnect::LGN, content.length(), ctmp));
 }
 
 void LoginWindow::on_lbl_register_clicked()
 {
-    this->setDisabled(true);
     RegisterWindow reg;
 
     reg.move(pos().x() + 30, pos().y() + 30);
-
+    reg.setWindowModality(Qt::ApplicationModal);
     QString username = reg.exec();
     if (username != "")
     {
         ui->edit_username->setText(username);
         ui->edit_password->setFocus();
     }
-    this->setDisabled(false);
     ui->edit_password->setFocus();
 }
 
@@ -198,7 +195,7 @@ void LoginWindow::checkLogin()
         }
 
         //登录成功
-        m_session = string(data.content, data.content + data.content_len);
+        m_session = string(data.content, data.content + data.content_len-2);
         m_connect->vec[TcpConnect::LGN].clear();
         ui->lbl_wrongtip->setStyleSheet("QLabel{color:rgb(25,198,136)}");
         ui->lbl_wrongtip->setText("登录成功！");

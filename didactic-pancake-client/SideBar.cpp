@@ -47,8 +47,12 @@ void SideBar::initControl()
     ui->btn_change_to_chat->setToolTip(QStringLiteral("聊天"));
     ui->btn_change_to_friend->setToolTip(QStringLiteral("通讯录"));
 
-    ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/pancake.png"));
+    ui->btn_change_to_chat->setCursor(QCursor(Qt::PointingHandCursor));
+    ui->btn_change_to_friend->setCursor(QCursor(Qt::PointingHandCursor));
+
+    ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
     ui->lbl_user_avatar->setScaledContents(true);
+    ui->lbl_user_avatar->setCursor(QCursor(Qt::PointingHandCursor));
 }
 
 void SideBar::paintEvent(QPaintEvent *event)

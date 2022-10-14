@@ -67,6 +67,32 @@
     <string>优秀</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="btn_process_friend_requests">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>20</y>
+     <width>25</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_red_point">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>18</y>
+     <width>7</width>
+     <height>7</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

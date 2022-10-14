@@ -1,13 +1,23 @@
 #include "StatusBar.h"
 #include "ui_StatusBar.h"
+#include "AddFriendWindow.h"
 
 #include <QPainter>
 #include <QMouseEvent>
 
 StatusBar::StatusBar(QWidget *parent) : QWidget(parent), m_isMaxWindow(false), m_colorR(0), m_colorG(0), m_colorB(0),
-                                        ui(new Ui::StatusBar)
+    m_friend_requests_window(new FriendRequestsWindow),
+    ui(new Ui::StatusBar)
 {
     ui->setupUi(this);
+
+    m_connect=TcpConnect::getInstance();
+    connect(m_connect,&TcpConnect::RFRpackAdd,this,&StatusBar::showRedPoint);
+
+    //item数目变的不为空
+    void notEmptyItem();
+    //item数目变为空
+    void emptyItem();
 
     initControl();
 
@@ -17,6 +27,7 @@ StatusBar::StatusBar(QWidget *parent) : QWidget(parent), m_isMaxWindow(false), m
 StatusBar::~StatusBar()
 {
     delete ui;
+    delete m_friend_requests_window;
 }
 
 void StatusBar::setBackgroundColor(int r, int g, int b)
@@ -28,21 +39,47 @@ void StatusBar::setBackgroundColor(int r, int g, int b)
     update();
 }
 
+void StatusBar::showRedPoint()
+{
+    ui->lbl_red_point->setVisible(true);
+}
+
+void StatusBar::hideRedPoint()
+{
+    ui->lbl_red_point->setVisible(false);
+}
+
 void StatusBar::initControl()
 {
+    m_friend_requests_window->setWindowModality(Qt::ApplicationModal);
+
     QString qss_btn_add_friend =
-        "QPushButton:!hover:!pressed{border-image: url(:/resource/btn_add_friend_normal.png)}" //默认
-        "QPushButton:hover{border-image: url(:/resource/btn_add_friend_hover.png)}"            //鼠标hover
-        "QPushButton:pressed{border-image: url(:/resource/btn_add_friend_press.png)}";         //鼠标点击
+            "QPushButton:!hover:!pressed{border-image: url(:/resource/btn_add_friend_normal.png)}" //默认
+            "QPushButton:hover{border-image: url(:/resource/btn_add_friend_hover.png)}"            //鼠标hover
+            "QPushButton:pressed{border-image: url(:/resource/btn_add_friend_press.png)}";         //鼠标点击
     ui->btn_add_friend->setStyleSheet(qss_btn_add_friend);
     ui->btn_add_friend->setToolTip(QStringLiteral("添加好友"));
+    ui->btn_add_friend->setCursor(QCursor(Qt::PointingHandCursor));
+
+    QString qss_btn_process_friend_requests =
+            "QPushButton:!hover:!pressed{border-image: url(:/resource/btn_process_friend_requests_normal.png)}" //默认
+            "QPushButton:hover{border-image: url(:/resource/btn_process_friend_requests_hover.png)}"            //鼠标hover
+            "QPushButton:pressed{border-image: url(:/resource/btn_process_friend_requests_press.png)}";         //鼠标点击
+    ui->btn_process_friend_requests->setStyleSheet(qss_btn_process_friend_requests);
+    ui->btn_process_friend_requests->setToolTip(QStringLiteral("处理好友申请"));
+    ui->btn_process_friend_requests->setCursor(QCursor(Qt::PointingHandCursor));
 
     QString qss_btn_network_status =
-        "QPushButton{background-color:rgb(25,198,136);}" //默认
-        "QPushButton{color: rgb(255,255,255); }"
-        "QPushButton{border-radius: 12px;}";
+            "QPushButton{background-color:rgb(25,198,136);}" //默认
+            "QPushButton{color: rgb(255,255,255); }"
+            "QPushButton{border-radius: 12px;}";
 
     ui->btn_network_status->setStyleSheet(qss_btn_network_status);
+
+
+    ui->lbl_red_point->setPixmap(QPixmap(":/resource/red_point.png"));
+    ui->lbl_red_point->setScaledContents(true);
+    ui->lbl_red_point->setVisible(false);
 }
 
 void StatusBar::paintEvent(QPaintEvent *event)
@@ -63,7 +100,7 @@ void StatusBar::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
-// 以下通过mousePressEvent、mouseMoveEvent、mouseReleaseEvent三个事件实现了鼠标拖动侧边栏栏移动窗口的效果;
+// 以下通过mousePressEvent、mouseMoveEvent、mouseReleaseEvent三个事件实现了鼠标拖动状态栏移动窗口的效果;
 void StatusBar::mousePressEvent(QMouseEvent *event)
 {
 
@@ -93,4 +130,18 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 {
     m_isPressed = false;
     return QWidget::mouseReleaseEvent(event);
+}
+
+void StatusBar::on_btn_add_friend_clicked()
+{
+    AddFriendWindow afw;
+    afw.setWindowModality(Qt::ApplicationModal);
+    afw.exec();
+}
+
+void StatusBar::on_btn_process_friend_requests_clicked()
+{
+    hideRedPoint();
+    m_friend_requests_window->exec();
+    hideRedPoint();
 }

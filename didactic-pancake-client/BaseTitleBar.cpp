@@ -71,6 +71,11 @@ void BaseTitleBar::initControl()
     m_pButtonMax->setToolTip(QStringLiteral("最大化"));
     m_pButtonClose->setToolTip(QStringLiteral("关闭"));
 
+    m_pButtonMin->setCursor(QCursor(Qt::PointingHandCursor));
+    m_pButtonRestore->setCursor(QCursor(Qt::PointingHandCursor));
+    m_pButtonMax->setCursor(QCursor(Qt::PointingHandCursor));
+    m_pButtonClose->setCursor(QCursor(Qt::PointingHandCursor));
+
     QHBoxLayout *mylayout = new QHBoxLayout(this);
     mylayout->setSpacing(0);
     // mylayout->addWidget(m_pIcon);
@@ -90,6 +95,7 @@ void BaseTitleBar::initControl()
     m_pTitleContent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     this->setFixedHeight(TITLE_HEIGHT);
     this->setWindowFlags(Qt::FramelessWindowHint);
+
 }
 
 // 信号槽的绑定;

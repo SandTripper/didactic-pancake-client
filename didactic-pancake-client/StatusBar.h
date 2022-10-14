@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "FriendRequestsWindow.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -21,6 +23,12 @@ public:
     // 设置状态栏背景色;
     void setBackgroundColor(int r, int g, int b);
 
+    //显示好友申请按钮上的红点
+    void showRedPoint();
+
+    //隐藏好友申请按钮上的红点
+    void hideRedPoint();
+
 public:
     //是否是最大化窗口
     bool m_isMaxWindow;
@@ -32,6 +40,11 @@ protected:
     int m_colorR;
     int m_colorG;
     int m_colorB;
+
+private slots:
+    void on_btn_add_friend_clicked();
+
+    void on_btn_process_friend_requests_clicked();
 
 private:
     // 初始化控件;
@@ -47,7 +60,14 @@ private:
     bool m_isPressed;
     QPoint m_startMovePos;
 
+    //好友申请窗口
+    FriendRequestsWindow* m_friend_requests_window;
+
     Ui::StatusBar *ui;
+
+    TcpConnect* m_connect;
+
+
 };
 
 #endif // STATUSBAR_H

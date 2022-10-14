@@ -49,6 +49,12 @@ const char *TcpConnect::ReqToString(TcpConnect::REQUEST r)
         return "RGT";
     case LGT:
         return "LGT";
+    case SCU:
+        return "SCU";
+    case ADF:
+        return "ADF";
+    case RFR:
+        return "RFR";
     default:
         return "ERR";
     }
@@ -79,7 +85,7 @@ void TcpConnect::read_handler()
         {
             return;
         }
-        vec[m_method].emplace_back(DataPacket(m_method, m_string, m_content_length));
+        vec[m_method].emplace_back(DataPacket(m_method, m_content_length, m_string));
 
         //发出数据包增加信号
         switch (m_method)
@@ -92,6 +98,15 @@ void TcpConnect::read_handler()
             break;
         case RGT:
             emit RGTpackAdd();
+            break;
+        case SCU:
+            emit SCUpackAdd();
+            break;
+        case ADF:
+            emit ADFpackAdd();
+            break;
+        case RFR:
+            emit RFRpackAdd();
             break;
         default:
             break;
@@ -169,10 +184,10 @@ TcpConnect::RESULT_CODE TcpConnect::process_read()
     return NO_REQUEST;
 }
 
-bool TcpConnect::write_data(const DataPacket &data, string sessionID)
+bool TcpConnect::write_data(const DataPacket &data)
 {
-    add_status_line(ReqToString((REQUEST)data.category));
-    add_headers(data.content_len, sessionID);
+    add_status_line(ReqToString(data.category));
+    add_headers(data.content_len);
     if (!add_content(data.content))
     {
         return false;
@@ -200,6 +215,18 @@ TcpConnect::RESULT_CODE TcpConnect::parse_request_line(char *text)
     else if (strcasecmp(method, "LGT") == 0)
     {
         m_method = LGT;
+    }
+    else if (strcasecmp(method, "SCU") == 0)
+    {
+        m_method = SCU;
+    }
+    else if (strcasecmp(method, "ADF") == 0)
+    {
+        m_method = ADF;
+    }
+    else if (strcasecmp(method, "RFR") == 0)
+    {
+        m_method = RFR;
     }
     else
     {
@@ -342,13 +369,9 @@ bool TcpConnect::add_status_line(const char *status)
     return add_response("%s\r\n", status);
 }
 
-bool TcpConnect::add_headers(int content_length, string sessionID)
+bool TcpConnect::add_headers(int content_length)
 {
     add_content_length(content_length);
-    if (sessionID != "")
-    {
-        add_session_id(sessionID);
-    }
     add_blank_line();
     return true;
 }
@@ -358,10 +381,6 @@ bool TcpConnect::add_content_length(int content_length)
     return add_response("Content-Length: %d\r\n", content_length);
 }
 
-bool TcpConnect::add_session_id(string sessionID)
-{
-    return add_response("Content-Length: %s\r\n", sessionID.c_str());
-}
 
 bool TcpConnect::add_blank_line()
 {

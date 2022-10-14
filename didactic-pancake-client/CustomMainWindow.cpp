@@ -44,6 +44,8 @@ void CustomMainWindow::onButtonMaxClicked()
     m_statusBar->m_isMaxWindow = true;
 }
 
+
+
 void CustomMainWindow::initTitleBar()
 {
 

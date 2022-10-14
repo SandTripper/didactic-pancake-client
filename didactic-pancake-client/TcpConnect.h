@@ -6,37 +6,8 @@
 #include <string.h>
 #include <QObject>
 
-class DataPacket
-{
-public:
-    DataPacket()
-    {
-        category = 0;
-        content = NULL;
-        content_len = 0;
-    }
-    DataPacket(int cat, char *con, int conlen)
-    {
-        category = cat;
-        content_len = conlen;
-        content = new char[conlen];
-        strncpy(content, con, conlen);
-    }
-    DataPacket(const DataPacket &other)
-    {
-        category = other.category;
-        content_len = other.content_len;
-        content = new char[content_len];
-        strncpy(content, other.content, content_len);
-    }
-    ~DataPacket()
-    {
-        delete[] content;
-    }
-    int category;
-    char *content;
-    int content_len;
-};
+class DataPacket;
+
 
 class TcpConnect : public QObject
 {
@@ -55,17 +26,23 @@ public:
     static const int WRITE_BUFFER_SIZE = 1024;
 
     /*请求类型
-    HBT表示发送心跳包；
-    LGN表示登录请求；
-    RGT表示注册请求；
-    LGT表示登出请求；
-    */
+     HBT表示发送心跳包；
+     LGN表示登录请求；
+     RGT表示注册请求；
+     LGT表示登出请求；
+     SCU表示查找用户请求；
+     ADF表示添加好友请求；
+     RFR表示回复好友请求；
+     */
     enum REQUEST
     {
         HBT = 0,
         LGN,
         RGT,
         LGT,
+        SCU,
+        ADF,
+        RFR,
     };
 
     //主状态机的两种可能状态，分别表示：当前正在分析请求行，当前正在分析内容
@@ -111,7 +88,7 @@ public:
     const char *ReqToString(REQUEST r);
 
     //填充应答
-    bool write_data(const DataPacket &data, std::string sessionID = "");
+    bool write_data(const DataPacket &data);
 
 private:
     TcpConnect();
@@ -139,15 +116,17 @@ private:
     bool add_response(const char *format, ...);
     bool add_content(const char *content);
     bool add_status_line(const char *status);
-    bool add_headers(int content_length, std::string sessionID);
+    bool add_headers(int content_length);
     bool add_content_length(int content_length);
-    bool add_session_id(std::string sessionID);
     bool add_blank_line();
 
 signals:
     // void HBTpackAdd();
     void LGNpackAdd();
     void RGTpackAdd();
+    void SCUpackAdd();
+    void ADFpackAdd();
+    void RFRpackAdd();
 
 protected slots:
     //读取并处理新到的数据
@@ -190,6 +169,49 @@ private:
 
     //存储数据正文
     char *m_string;
+};
+
+//数据包类
+class DataPacket
+{
+public:
+    DataPacket()
+    {
+        category = TcpConnect::HBT;
+        content = NULL;
+        content_len = 0;
+    }
+    DataPacket(TcpConnect::REQUEST cat, const char *con)
+    {
+        category = cat;
+        content_len = strlen(con);
+        content = new char[content_len+1];
+        strncpy(content, con, content_len);
+        content[content_len]='\0';
+    }
+    DataPacket(TcpConnect::REQUEST cat, int conlen, const char *con)
+    {
+        category = cat;
+        content_len = conlen;
+        content = new char[conlen+1];
+        strncpy(content, con, conlen);
+        content[content_len]='\0';
+    }
+    DataPacket(const DataPacket &other)
+    {
+        category = other.category;
+        content_len = other.content_len;
+        content = new char[content_len+1];
+        strncpy(content, other.content, content_len);
+        content[content_len]='\0';
+    }
+    ~DataPacket()
+    {
+        delete[] content;
+    }
+    TcpConnect::REQUEST category;
+    int content_len;
+    char *content;
 };
 
 #endif // TCPCONNECT_H

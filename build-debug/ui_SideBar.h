@@ -11,9 +11,9 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
+#include "LabelPlus.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -22,7 +22,7 @@ class Ui_SideBar
 public:
     QPushButton *btn_change_to_chat;
     QPushButton *btn_change_to_friend;
-    QLabel *lbl_user_avatar;
+    LabelPlus *lbl_user_avatar;
 
     void setupUi(QWidget *SideBar)
     {
@@ -36,7 +36,7 @@ public:
         btn_change_to_friend = new QPushButton(SideBar);
         btn_change_to_friend->setObjectName(QString::fromUtf8("btn_change_to_friend"));
         btn_change_to_friend->setGeometry(QRect(2, 130, 51, 41));
-        lbl_user_avatar = new QLabel(SideBar);
+        lbl_user_avatar = new LabelPlus(SideBar);
         lbl_user_avatar->setObjectName(QString::fromUtf8("lbl_user_avatar"));
         lbl_user_avatar->setEnabled(true);
         lbl_user_avatar->setGeometry(QRect(10, 37, 36, 36));

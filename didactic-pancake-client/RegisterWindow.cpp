@@ -148,7 +148,7 @@ void RegisterWindow::on_btn_register_clicked()
     QByteArray ba = content.toLatin1();
     ctmp = ba.data();
 
-    m_connect->write_data(DataPacket(TcpConnect::RGT, ctmp, content.length()));
+    m_connect->write_data(DataPacket(TcpConnect::RGT, content.length(), ctmp));
 }
 
 void RegisterWindow::checkRegister()

@@ -1,0 +1,17 @@
+QListWidget
+{
+    border-bottom: 1px solid black;
+    outline: 0px;
+    border: 0px;
+    background-color: rgb(255,255,255);
+}
+QListWidget:item:hover
+{
+    background-color: rgb(255,255,255);
+    border: 0px;
+}
+QListWidget::item:selected
+{
+    border: 0px;
+    background-color: rgb(255,255,255);
+}
