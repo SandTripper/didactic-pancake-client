@@ -31,9 +31,11 @@ Todo
 * 添加好友界面
   
 (无结果时)
+
 ![](/introduction/AddFriendWindowNormal.jpg)
 
 (有结果时)
+
 ![](/introduction/AddFriendWindowResult.jpg)
 
 * 处理好友申请界面
