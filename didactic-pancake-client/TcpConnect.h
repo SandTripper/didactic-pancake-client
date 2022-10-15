@@ -76,6 +76,7 @@ public:
         CLOSED_CONNECTION
     };
 
+    //存储读到的包
     std::vector<std::vector<DataPacket>> vec;
 
 public:
@@ -92,8 +93,11 @@ public:
 
 private:
     TcpConnect();
-    //初始化连接
-    void init();
+    //初始化读
+    void initRead();
+
+    //初始化写
+    void initWrite();
 
     //非阻塞读操作
     bool read();

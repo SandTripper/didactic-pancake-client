@@ -32,22 +32,25 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-
+    //注册按钮被按下
     void on_btn_register_clicked();
+    //检查服务器的注册回复
     void checkRegister();
 
 private:
+    //初始化本窗口
+    void initThis();
+    //初始化标题栏
     void initTitleBar();
-
     // 初始化控件;
     void initControl();
 
     Ui::RegisterWindow *ui;
 
     QEventLoop *m_Loop;
-
+    //存储注册成功的用户名
     QString m_username;
-
+    //指向唯一的连接对象
     TcpConnect *m_connect;
 };
 

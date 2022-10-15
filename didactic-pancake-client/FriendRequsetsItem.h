@@ -19,23 +19,23 @@ class FriendRequsetsItem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FriendRequsetsItem(QWidget *parent = nullptr,const QString&username = "",QListWidgetItem *item = nullptr);
+    explicit FriendRequsetsItem(QWidget *parent = nullptr, const QString &username = "", QListWidgetItem *item = nullptr);
+
     ~FriendRequsetsItem();
 
-    void setUserName(const QString&username);
-
-
 signals:
+    //将自己从所在的列表删除
     void deleteMe(QListWidgetItem *object);
 
-public slots:
-
 private slots:
+    //点击接受按钮
     void on_btn_accept_clicked();
-
+    //点击拒绝按钮
     void on_btn_reject_clicked();
 
 private:
+    //初始化本窗口
+    void initThis();
     // 初始化控件;
     void initControl();
 
@@ -45,21 +45,26 @@ private:
     Ui::FriendRequsetsItem *ui;
 
     QListWidgetItem *m_item;
-
-    TcpConnect* m_connect;
+    //指向服务器的连接对象
+    TcpConnect *m_connect;
 };
 
-
-class FriendRequsetsListWidget : public SuspendedScrollBar_ListWidget {
+class FriendRequsetsListWidget : public SuspendedScrollBar_ListWidget
+{
     Q_OBJECT
 public:
-    explicit FriendRequsetsListWidget(QWidget * parent = 0);
-    ~FriendRequsetsListWidget(){}
+    explicit FriendRequsetsListWidget(QWidget *parent = nullptr);
 
+    ~FriendRequsetsListWidget() {}
+
+    //添加申请者窗口
     void addRequest(const QString &username);
 
+    //删除申请者窗口
     void deleteRequest(QListWidgetItem *object);
 
+private:
+    void initThis();
 };
 
 #endif // FRIENDREQUSETSITEM_H

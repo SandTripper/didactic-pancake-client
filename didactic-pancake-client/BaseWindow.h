@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QObject>
 #include <QMainWindow>
+
 #include "BaseTitleBar.h"
 
 class BaseWindow : public QWidget
@@ -17,7 +18,13 @@ public:
     // 设置背景色;
     void setBackgroundColor(int r, int g, int b);
 
+    //设置任务栏图标
+    void setSystemTrayIcon(const QIcon &icon);
+
 private:
+    //初始化本窗口
+    void initThis();
+    //初始化标题栏
     void initTitleBar();
 
 private slots:

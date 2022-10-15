@@ -25,8 +25,6 @@ public:
     //是否是最大化窗口
     bool m_isMaxWindow;
 
-public slots:
-
 protected:
     // 侧边栏背景色;
     int m_colorR;
@@ -39,10 +37,14 @@ private slots:
     void on_btn_change_to_friend_clicked();
 
 private:
+    //初始化本窗口
+    void initThis();
     // 初始化控件;
     void initControl();
-
+    //重写paintEvent事件
     void paintEvent(QPaintEvent *event);
+
+    //重写以下事件以实现拖动窗口的功能
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
@@ -50,6 +52,7 @@ private:
 private:
     // 移动窗口的变量;
     bool m_isPressed;
+
     QPoint m_startMovePos;
 
     Ui::SideBar *ui;

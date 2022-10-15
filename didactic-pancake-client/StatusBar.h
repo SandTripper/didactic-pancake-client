@@ -33,8 +33,6 @@ public:
     //是否是最大化窗口
     bool m_isMaxWindow;
 
-public slots:
-
 protected:
     // 状态栏背景色;
     int m_colorR;
@@ -47,6 +45,8 @@ private slots:
     void on_btn_process_friend_requests_clicked();
 
 private:
+    //初始化本窗口
+    void initThis();
     // 初始化控件;
     void initControl();
 
@@ -60,14 +60,16 @@ private:
     bool m_isPressed;
     QPoint m_startMovePos;
 
+    //好友申请窗口是否打开
+    bool isFriendRequestsWindowOpen;
+
     //好友申请窗口
-    FriendRequestsWindow* m_friend_requests_window;
+    FriendRequestsWindow *m_friend_requests_window;
 
     Ui::StatusBar *ui;
 
-    TcpConnect* m_connect;
-
-
+    //指向服务器的连接对象
+    TcpConnect *m_connect;
 };
 
 #endif // STATUSBAR_H

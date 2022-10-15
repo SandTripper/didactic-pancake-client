@@ -6,6 +6,7 @@
 #include <QListWidget>
 #include <QScrollArea>
 #include <QPropertyAnimation>
+
 //悬浮滚动条-例子说明
 //鼠标移动到控件上时显示滚动条，鼠标离开控件则隐藏滚动条
 //目前只实现垂直滚动条，代码简单
@@ -59,7 +60,5 @@ protected:
     void enterEvent(QEvent *);
     void leaveEvent(QEvent *);
 };
-
-
 
 #endif // SUSPENDEDSCROLLBAR_H

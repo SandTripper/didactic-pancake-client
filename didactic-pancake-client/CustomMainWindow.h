@@ -21,22 +21,29 @@ class CustomMainWindow : public BaseWindow
     Q_OBJECT
 
 public:
-    explicit CustomMainWindow(std::string sessionID, QWidget *parent = 0);
+    explicit CustomMainWindow(QString sessionID, QString username, QWidget *parent = 0);
     ~CustomMainWindow();
 
 protected slots:
+    //点击回复按钮
     void onButtonRestoreClicked();
+    //点击最大化按钮
     void onButtonMaxClicked();
 
 private:
+    //初始化本窗口
+    void initThis();
+    //初始化标题栏
     void initTitleBar();
+    //初始化侧边栏
     void initSideBar();
+    //初始化状态栏
     void initStatusBar();
 
     Ui::CustomMainWindow *ui;
 
     //与服务器的会话ID
-    std::string m_sessionID;
+    QString m_sessionID;
 
     //指向与服务器的连接对象
     TcpConnect *m_connect;

@@ -19,13 +19,13 @@ CXXFLAGS      = -fno-keep-inline-dllexport -g -std=gnu++11 -Wall -W -Wextra -fex
 INCPATH       = -I..\didactic-pancake-client -I. -ID:\QT\5.13.2\mingw73_64\include -ID:\QT\5.13.2\mingw73_64\include\QtWidgets -ID:\QT\5.13.2\mingw73_64\include\QtGui -ID:\QT\5.13.2\mingw73_64\include\QtANGLE -ID:\QT\5.13.2\mingw73_64\include\QtNetwork -ID:\QT\5.13.2\mingw73_64\include\QtCore -Idebug -I. -I/include -ID:\QT\5.13.2\mingw73_64\mkspecs\win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-subsystem,windows -mthreads
-LIBS        =        D:\QT\5.13.2\mingw73_64\lib\libQt5Widgetsd.a D:\QT\5.13.2\mingw73_64\lib\libQt5Guid.a D:\QT\5.13.2\mingw73_64\lib\libQt5Networkd.a D:\QT\5.13.2\mingw73_64\lib\libQt5Cored.a  -lmingw32 D:\QT\5.13.2\mingw73_64\lib\libqtmaind.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.7.25-winx64\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 
+LIBS        =        D:\QT\5.13.2\mingw73_64\lib\libQt5Widgetsd.a D:\QT\5.13.2\mingw73_64\lib\libQt5Guid.a D:\QT\5.13.2\mingw73_64\lib\libQt5Networkd.a D:\QT\5.13.2\mingw73_64\lib\libQt5Cored.a debug\icon_res.o  -lmingw32 D:\QT\5.13.2\mingw73_64\lib\libqtmaind.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.7.25-winx64\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 
 QMAKE         = D:\QT\5.13.2\mingw73_64\bin\qmake.exe
 IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = 
+RES_FILE      = debug\icon_res.o
 COPY          = copy /y
 SED           = $(QMAKE) -install sed
 COPY_FILE     = copy /y
@@ -139,8 +139,11 @@ DESTDIR_TARGET = debug\didactic-pancake-client.exe
 first: all
 all: Makefile.Debug  debug/didactic-pancake-client.exe
 
-debug/didactic-pancake-client.exe: D:/QT/5.13.2/mingw73_64/lib/libQt5Widgetsd.a D:/QT/5.13.2/mingw73_64/lib/libQt5Guid.a D:/QT/5.13.2/mingw73_64/lib/libQt5Networkd.a D:/QT/5.13.2/mingw73_64/lib/libQt5Cored.a D:/QT/5.13.2/mingw73_64/lib/libqtmaind.a ui_AddFriendWindow.h ui_CustomMainWindow.h ui_FriendRequestsWindow.h ui_FriendRequsetsItem.h ui_LoginWindow.h ui_RegisterWindow.h ui_SideBar.h ui_StatusBar.h $(OBJECTS) 
+debug/didactic-pancake-client.exe: D:/QT/5.13.2/mingw73_64/lib/libQt5Widgetsd.a D:/QT/5.13.2/mingw73_64/lib/libQt5Guid.a D:/QT/5.13.2/mingw73_64/lib/libQt5Networkd.a D:/QT/5.13.2/mingw73_64/lib/libQt5Cored.a D:/QT/5.13.2/mingw73_64/lib/libqtmaind.a ui_AddFriendWindow.h ui_CustomMainWindow.h ui_FriendRequestsWindow.h ui_FriendRequsetsItem.h ui_LoginWindow.h ui_RegisterWindow.h ui_SideBar.h ui_StatusBar.h $(OBJECTS) debug/icon_res.o
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) @object_script.didactic-pancake-client.Debug  $(LIBS)
+
+debug/icon_res.o: ../didactic-pancake-client/icon.rc
+	windres -i ..\didactic-pancake-client\icon.rc -o debug\icon_res.o --include-dir=./../didactic-pancake-client $(DEFINES)
 
 qmake: FORCE
 	@$(QMAKE) -o Makefile.Debug ..\didactic-pancake-client\didactic-pancake-client.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
@@ -152,6 +155,7 @@ dist:
 
 clean: compiler_clean 
 	-$(DEL_FILE) debug\AddFriendWindow.o debug\BaseTitleBar.o debug\BaseWindow.o debug\FriendRequestsWindow.o debug\FriendRequsetsItem.o debug\LabelPlus.o debug\LoginWindow.o debug\RegisterWindow.o debug\SideBar.o debug\StatusBar.o debug\SuspendedScrollbar.o debug\TcpConnect.o debug\main.o debug\CustomMainWindow.o debug\qrc_Resource.o debug\moc_AddFriendWindow.o debug\moc_BaseTitleBar.o debug\moc_BaseWindow.o debug\moc_CustomMainWindow.o debug\moc_FriendRequestsWindow.o debug\moc_FriendRequsetsItem.o debug\moc_LabelPlus.o debug\moc_LoginWindow.o debug\moc_RegisterWindow.o debug\moc_SideBar.o debug\moc_StatusBar.o debug\moc_SuspendedScrollbar.o debug\moc_TcpConnect.o
+	-$(DEL_FILE) debug\icon_res.o
 
 distclean: clean 
 	-$(DEL_FILE) .qmake.stash
@@ -177,6 +181,7 @@ debug/qrc_Resource.cpp: ../didactic-pancake-client/Resource.qrc \
 		../didactic-pancake-client/resource/m_pButtonRestore_hover.png \
 		../didactic-pancake-client/resource/m_pButtonClose_press.png \
 		../didactic-pancake-client/resource/btn_change_to_friend_hover.png \
+		../didactic-pancake-client/resource/red_point.png \
 		../didactic-pancake-client/resource/btn_process_friend_requests_hover.png \
 		../didactic-pancake-client/resource/m_pButtonRestore_normal.png \
 		../didactic-pancake-client/resource/m_pButtonMin_hover.png \
@@ -199,8 +204,7 @@ debug/qrc_Resource.cpp: ../didactic-pancake-client/Resource.qrc \
 		../didactic-pancake-client/resource/pancake.png \
 		../didactic-pancake-client/resource/m_pButtonMax_press.png \
 		../didactic-pancake-client/resource/default_avatar.png \
-		../didactic-pancake-client/resource/SuspendedScrollbar/scrollbar.qss \
-		../didactic-pancake-client/resource/SuspendedScrollbar/listwidget.qss
+		../didactic-pancake-client/resource/SuspendedScrollbar/scrollbar.qss
 	D:\QT\5.13.2\mingw73_64\bin\rcc.exe -name Resource ..\didactic-pancake-client\Resource.qrc -o debug\qrc_Resource.cpp
 
 compiler_moc_predefs_make_all: debug/moc_predefs.h
@@ -1070,6 +1074,28 @@ debug/moc_CustomMainWindow.cpp: ../didactic-pancake-client/CustomMainWindow.h \
 		../didactic-pancake-client/FriendRequestsWindow.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QEventLoop \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QEvent \
+		../didactic-pancake-client/FriendRequsetsItem.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyleoption.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qvalidator.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyle.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qtabbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qrubberband.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidgetItem \
+		../didactic-pancake-client/SuspendedScrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollBar \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		debug/moc_predefs.h \
 		D:/QT/5.13.2/mingw73_64/bin/moc.exe
 	D:\QT\5.13.2\mingw73_64\bin\moc.exe $(DEFINES) --include E:/Code/Project/didactic-pancake-client/build-debug/debug/moc_predefs.h -ID:/QT/5.13.2/mingw73_64/mkspecs/win32-g++ -IE:/Code/Project/didactic-pancake-client/didactic-pancake-client -ID:/QT/5.13.2/mingw73_64/include -ID:/QT/5.13.2/mingw73_64/include/QtWidgets -ID:/QT/5.13.2/mingw73_64/include/QtGui -ID:/QT/5.13.2/mingw73_64/include/QtANGLE -ID:/QT/5.13.2/mingw73_64/include/QtNetwork -ID:/QT/5.13.2/mingw73_64/include/QtCore -I. -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/QT/Tools/mingw730_64/x86_64-w64-mingw32/include ..\didactic-pancake-client\CustomMainWindow.h -o debug\moc_CustomMainWindow.cpp
@@ -1379,6 +1405,28 @@ debug/moc_FriendRequestsWindow.cpp: ../didactic-pancake-client/FriendRequestsWin
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qpushbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
+		../didactic-pancake-client/FriendRequsetsItem.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyleoption.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qvalidator.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyle.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qtabbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qrubberband.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidgetItem \
+		../didactic-pancake-client/SuspendedScrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollBar \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		debug/moc_predefs.h \
 		D:/QT/5.13.2/mingw73_64/bin/moc.exe
 	D:\QT\5.13.2\mingw73_64\bin\moc.exe $(DEFINES) --include E:/Code/Project/didactic-pancake-client/build-debug/debug/moc_predefs.h -ID:/QT/5.13.2/mingw73_64/mkspecs/win32-g++ -IE:/Code/Project/didactic-pancake-client/didactic-pancake-client -ID:/QT/5.13.2/mingw73_64/include -ID:/QT/5.13.2/mingw73_64/include/QtWidgets -ID:/QT/5.13.2/mingw73_64/include/QtGui -ID:/QT/5.13.2/mingw73_64/include/QtANGLE -ID:/QT/5.13.2/mingw73_64/include/QtNetwork -ID:/QT/5.13.2/mingw73_64/include/QtCore -I. -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/QT/Tools/mingw730_64/x86_64-w64-mingw32/include ..\didactic-pancake-client\FriendRequestsWindow.h -o debug\moc_FriendRequestsWindow.cpp
@@ -2844,6 +2892,28 @@ debug/moc_StatusBar.cpp: ../didactic-pancake-client/StatusBar.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qpushbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
+		../didactic-pancake-client/FriendRequsetsItem.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyleoption.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qvalidator.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyle.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qtabbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qrubberband.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidgetItem \
+		../didactic-pancake-client/SuspendedScrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollBar \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		debug/moc_predefs.h \
 		D:/QT/5.13.2/mingw73_64/bin/moc.exe
 	D:\QT\5.13.2\mingw73_64\bin\moc.exe $(DEFINES) --include E:/Code/Project/didactic-pancake-client/build-debug/debug/moc_predefs.h -ID:/QT/5.13.2/mingw73_64/mkspecs/win32-g++ -IE:/Code/Project/didactic-pancake-client/didactic-pancake-client -ID:/QT/5.13.2/mingw73_64/include -ID:/QT/5.13.2/mingw73_64/include/QtWidgets -ID:/QT/5.13.2/mingw73_64/include/QtGui -ID:/QT/5.13.2/mingw73_64/include/QtANGLE -ID:/QT/5.13.2/mingw73_64/include/QtNetwork -ID:/QT/5.13.2/mingw73_64/include/QtCore -I. -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/QT/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/QT/Tools/mingw730_64/x86_64-w64-mingw32/include ..\didactic-pancake-client\StatusBar.h -o debug\moc_StatusBar.cpp
@@ -4829,9 +4899,6 @@ debug/FriendRequestsWindow.o: ../didactic-pancake-client/FriendRequestsWindow.cp
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qpushbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
-		ui_FriendRequestsWindow.h \
-		../didactic-pancake-client/LabelPlus.h \
-		../didactic-pancake-client/RegisterWindow.h \
 		../didactic-pancake-client/FriendRequsetsItem.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
@@ -4852,7 +4919,10 @@ debug/FriendRequestsWindow.o: ../didactic-pancake-client/FriendRequestsWindow.cp
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
-		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
+		ui_FriendRequestsWindow.h \
+		../didactic-pancake-client/LabelPlus.h \
+		../didactic-pancake-client/RegisterWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\FriendRequestsWindow.o ..\didactic-pancake-client\FriendRequestsWindow.cpp
 
 debug/FriendRequsetsItem.o: ../didactic-pancake-client/FriendRequsetsItem.cpp ../didactic-pancake-client/FriendRequsetsItem.h \
@@ -6337,6 +6407,28 @@ debug/StatusBar.o: ../didactic-pancake-client/StatusBar.cpp ../didactic-pancake-
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qpushbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
+		../didactic-pancake-client/FriendRequsetsItem.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyleoption.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qvalidator.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyle.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qtabbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qrubberband.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidgetItem \
+		../didactic-pancake-client/SuspendedScrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollBar \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		ui_StatusBar.h \
 		../didactic-pancake-client/AddFriendWindow.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/QPainter \
@@ -7057,7 +7149,6 @@ debug/main.o: ../didactic-pancake-client/main.cpp D:/QT/5.13.2/mingw73_64/includ
 		../didactic-pancake-client/FriendRequestsWindow.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QEventLoop \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QEvent \
-		../didactic-pancake-client/LoginWindow.h \
 		../didactic-pancake-client/FriendRequsetsItem.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
@@ -7079,7 +7170,8 @@ debug/main.o: ../didactic-pancake-client/main.cpp D:/QT/5.13.2/mingw73_64/includ
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
-		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
+		../didactic-pancake-client/LoginWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\main.o ..\didactic-pancake-client\main.cpp
 
 debug/CustomMainWindow.o: ../didactic-pancake-client/CustomMainWindow.cpp ../didactic-pancake-client/CustomMainWindow.h \
@@ -7390,6 +7482,28 @@ debug/CustomMainWindow.o: ../didactic-pancake-client/CustomMainWindow.cpp ../did
 		../didactic-pancake-client/FriendRequestsWindow.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QEventLoop \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QEvent \
+		../didactic-pancake-client/FriendRequsetsItem.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidget \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlistview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyleoption.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qvalidator.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractslider.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qstyle.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qtabbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qrubberband.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QListWidgetItem \
+		../didactic-pancake-client/SuspendedScrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollBar \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollbar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QScrollArea \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		ui_CustomMainWindow.h \
 		../didactic-pancake-client/LoginWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\CustomMainWindow.o ..\didactic-pancake-client\CustomMainWindow.cpp

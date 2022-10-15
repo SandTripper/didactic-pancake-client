@@ -14,7 +14,6 @@ BaseTitleBar::BaseTitleBar(QWidget *parent)
     : QWidget(parent), m_x(1), m_colorR(153), m_colorG(153), m_colorB(153), m_isPressed(false), m_buttonType(MIN_MAX_BUTTON)
 {
     // 初始化;
-
     initControl();
     initConnections();
 }
@@ -78,15 +77,11 @@ void BaseTitleBar::initControl()
 
     QHBoxLayout *mylayout = new QHBoxLayout(this);
     mylayout->setSpacing(0);
-    // mylayout->addWidget(m_pIcon);
-    // mylayout->addSpacing(-10);
     mylayout->addWidget(m_pTitleContent);
     mylayout->addWidget(m_pButtonMin);
     mylayout->addWidget(m_pButtonRestore);
     mylayout->addWidget(m_pButtonMax);
     mylayout->addWidget(m_pButtonClose);
-
-    // mylayout->addSpacing(-1);
 
     mylayout->setContentsMargins(5, 0, 0, 0);
 
@@ -95,7 +90,6 @@ void BaseTitleBar::initControl()
     m_pTitleContent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     this->setFixedHeight(TITLE_HEIGHT);
     this->setWindowFlags(Qt::FramelessWindowHint);
-
 }
 
 // 信号槽的绑定;
@@ -174,14 +168,6 @@ void BaseTitleBar::setButtonType(ButtonType buttonType)
     default:
         break;
     }
-}
-
-// 设置标题栏中的标题是否会自动滚动，跑马灯的效果;
-// 一般情况下标题栏中的标题内容是不滚动的，但是既然自定义就看自己需要嘛，想怎么设计就怎么搞O(∩_∩)O！
-void BaseTitleBar::setTitleRoll()
-{
-    connect(&m_titleRollTimer, SIGNAL(timeout()), this, SLOT(onRollTitle()));
-    m_titleRollTimer.start(200);
 }
 
 // 保存窗口最大化前窗口的位置以及大小;
@@ -277,20 +263,6 @@ void BaseTitleBar::mouseReleaseEvent(QMouseEvent *event)
     return QWidget::mouseReleaseEvent(event);
 }
 
-// 加载本地样式文件;
-// 可以将样式直接写在文件中，程序运行时直接加载进来;
-void BaseTitleBar::loadStyleSheet(const QString &sheetName)
-{
-    QFile file(":/" + sheetName + ".css");
-    file.open(QFile::ReadOnly);
-    if (file.isOpen())
-    {
-        QString styleSheet = this->styleSheet();
-        styleSheet += QLatin1String(file.readAll());
-        this->setStyleSheet(styleSheet);
-    }
-}
-
 // 以下为按钮操作响应的槽;
 void BaseTitleBar::onButtonMinClicked()
 {
@@ -314,17 +286,4 @@ void BaseTitleBar::onButtonMaxClicked()
 void BaseTitleBar::onButtonCloseClicked()
 {
     emit signalButtonCloseClicked();
-}
-
-// 该方法主要是让标题栏中的标题显示为滚动的效果;
-void BaseTitleBar::onRollTitle()
-{
-    static int nPos = 0;
-    QString titleContent = m_titleContent;
-    // 当截取的位置比字符串长时，从头开始;
-    if (nPos > titleContent.length())
-        nPos = 0;
-
-    m_pTitleContent->setText(titleContent.mid(nPos));
-    nPos++;
 }

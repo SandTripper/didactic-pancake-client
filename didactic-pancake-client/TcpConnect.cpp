@@ -31,6 +31,7 @@ TcpConnect::TcpConnect()
     m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
 }
 
+
 TcpConnect::~TcpConnect()
 {
     m_client->close();
@@ -60,19 +61,24 @@ const char *TcpConnect::ReqToString(TcpConnect::REQUEST r)
     }
 }
 
-void TcpConnect::init()
-{
-    m_bytes_have_send = 0;
-    m_bytes_to_send = 0;
-    m_check_state = CHECK_STATE_REQUESTLINE;
 
+void TcpConnect::initRead()
+{
     m_method = HBT;
     m_start_line = 0;
     m_checked_idx = 0;
+
+    m_check_state = CHECK_STATE_REQUESTLINE;
     m_read_idx = 0;
+    memset(m_read_buf, '\0', READ_BUFFER_SIZE);
+}
+
+void TcpConnect::initWrite()
+{
+    m_bytes_have_send = 0;
+    m_bytes_to_send = 0;
     m_write_idx = 0;
     m_content_length = 0;
-    memset(m_read_buf, '\0', READ_BUFFER_SIZE);
     memset(m_write_buf, '\0', WRITE_BUFFER_SIZE);
 }
 
@@ -112,7 +118,7 @@ void TcpConnect::read_handler()
             break;
         }
 
-        init();
+        initRead();
     }
 }
 
@@ -139,7 +145,7 @@ bool TcpConnect::read()
 TcpConnect::RESULT_CODE TcpConnect::process_read()
 {
     LINE_STATUS linestatus = LINE_OK; //记录当前行的读取状态
-    RESULT_CODE retcode = NO_REQUEST; //记录请求的处理结果
+    RESULT_CODE retcode = NO_REQUEST; //记录处理结果
     char *text = 0;
 
     //主状态机，用于从buffer中取出所有完整的行
@@ -151,7 +157,7 @@ TcpConnect::RESULT_CODE TcpConnect::process_read()
 
         switch (m_check_state)
         {
-        case CHECK_STATE_REQUESTLINE: //第一个状态，分析请求行
+        case CHECK_STATE_REQUESTLINE: //第一个状态，分析消息类型行
             retcode = parse_request_line(text);
             if (retcode == BAD_REQUEST)
             {
@@ -193,7 +199,7 @@ bool TcpConnect::write_data(const DataPacket &data)
         return false;
     }
     m_client->write(m_write_buf, m_write_idx);
-    init();
+    initWrite();
     return 0;
 }
 
@@ -233,7 +239,7 @@ TcpConnect::RESULT_CODE TcpConnect::parse_request_line(char *text)
         return BAD_REQUEST;
     }
 
-    //请求行处理完毕，状态转移到头部字段的分析
+    //消息类型行处理完毕，状态转移到头部字段的分析
     m_check_state = CHECK_STATE_HEADER;
     return NO_REQUEST;
 }
@@ -243,14 +249,14 @@ TcpConnect::RESULT_CODE TcpConnect::parse_headers(char *text)
     //遇到空行，表示头部字段解析完毕
     if (text[0] == '\0')
     {
-        /*如果HTTP请求有消息体，则还需要读取m_content_length字节的消息体，
+        /*如果数据有消息体，则还需要读取m_content_length字节的消息体，
             状态机转移到CHECK_STATE_CONTENT状态*/
         if (m_content_length != 0)
         {
             m_check_state = CHECK_STATE_CONTENT;
             return NO_REQUEST;
         }
-        //否则说明我们得到了一个完整的请求
+        //否则说明我们得到了一个完整的数据包
         else
         {
             return GET_REQUEST;
@@ -301,9 +307,9 @@ TcpConnect::LINE_STATUS TcpConnect::parse_line()
         //如果当前的字节是'\r'，即回车符，则说明可能读取到一个完整的行
         if (temp == '\r')
         {
-            /*如果'\r'字符碰巧是目前buffer中最后一个已经被读入的客户数据，
+            /*如果'\r'字符碰巧是目前buffer中最后一个已经被读入的数据，
                 那么这次分析没有读取到一个完整的行，返回LINE_OPEN以表示还需要
-                继续读取客户数据才能进一步分析*/
+                继续读取数据才能进一步分析*/
             if ((m_checked_idx + 1) == m_read_idx)
             {
                 return LINE_OPEN;
@@ -315,7 +321,7 @@ TcpConnect::LINE_STATUS TcpConnect::parse_line()
                 m_read_buf[m_checked_idx++] = '\0';
                 return LINE_OK;
             }
-            //否则，就说明客户发送的HTTP请求存在语法问题
+            //否则，就说明数据包存在语法问题
             return LINE_BAD;
         }
         //如果当前的字节是'\n'，即换行符，则也说明可能读取到一个完整的行
@@ -328,7 +334,7 @@ TcpConnect::LINE_STATUS TcpConnect::parse_line()
                 m_read_buf[m_checked_idx++] = '\0';
                 return LINE_OK;
             }
-            //否则，就说明客户发送的HTTP请求存在语法问题
+            //否则，就说明数据包存在语法问题
             else
             {
                 return LINE_BAD;

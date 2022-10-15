@@ -19,6 +19,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
 
 private:
+    //显示的文本
     QString m_str;
 };
 

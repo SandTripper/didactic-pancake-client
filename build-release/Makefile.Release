@@ -19,13 +19,13 @@ CXXFLAGS      = -fno-keep-inline-dllexport -O2 -std=gnu++11 -Wall -W -Wextra -fe
 INCPATH       = -I..\didactic-pancake-client -I. -ID:\QT\5.13.2\mingw73_64\include -ID:\QT\5.13.2\mingw73_64\include\QtWidgets -ID:\QT\5.13.2\mingw73_64\include\QtGui -ID:\QT\5.13.2\mingw73_64\include\QtANGLE -ID:\QT\5.13.2\mingw73_64\include\QtNetwork -ID:\QT\5.13.2\mingw73_64\include\QtCore -Irelease -I. -I/include -ID:\QT\5.13.2\mingw73_64\mkspecs\win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-s -Wl,-subsystem,windows -mthreads
-LIBS        =        D:\QT\5.13.2\mingw73_64\lib\libQt5Widgets.a D:\QT\5.13.2\mingw73_64\lib\libQt5Gui.a D:\QT\5.13.2\mingw73_64\lib\libQt5Network.a D:\QT\5.13.2\mingw73_64\lib\libQt5Core.a  -lmingw32 D:\QT\5.13.2\mingw73_64\lib\libqtmain.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.7.25-winx64\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 
+LIBS        =        D:\QT\5.13.2\mingw73_64\lib\libQt5Widgets.a D:\QT\5.13.2\mingw73_64\lib\libQt5Gui.a D:\QT\5.13.2\mingw73_64\lib\libQt5Network.a D:\QT\5.13.2\mingw73_64\lib\libQt5Core.a release\icon_res.o  -lmingw32 D:\QT\5.13.2\mingw73_64\lib\libqtmain.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.7.25-winx64\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 
 QMAKE         = D:\QT\5.13.2\mingw73_64\bin\qmake.exe
 IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = 
+RES_FILE      = release\icon_res.o
 COPY          = copy /y
 SED           = $(QMAKE) -install sed
 COPY_FILE     = copy /y
@@ -139,8 +139,11 @@ DESTDIR_TARGET = release\didactic-pancake-client.exe
 first: all
 all: Makefile.Release  release/didactic-pancake-client.exe
 
-release/didactic-pancake-client.exe: D:/QT/5.13.2/mingw73_64/lib/libQt5Widgets.a D:/QT/5.13.2/mingw73_64/lib/libQt5Gui.a D:/QT/5.13.2/mingw73_64/lib/libQt5Network.a D:/QT/5.13.2/mingw73_64/lib/libQt5Core.a D:/QT/5.13.2/mingw73_64/lib/libqtmain.a ui_AddFriendWindow.h ui_CustomMainWindow.h ui_FriendRequestsWindow.h ui_FriendRequsetsItem.h ui_LoginWindow.h ui_RegisterWindow.h ui_SideBar.h ui_StatusBar.h $(OBJECTS) 
+release/didactic-pancake-client.exe: D:/QT/5.13.2/mingw73_64/lib/libQt5Widgets.a D:/QT/5.13.2/mingw73_64/lib/libQt5Gui.a D:/QT/5.13.2/mingw73_64/lib/libQt5Network.a D:/QT/5.13.2/mingw73_64/lib/libQt5Core.a D:/QT/5.13.2/mingw73_64/lib/libqtmain.a ui_AddFriendWindow.h ui_CustomMainWindow.h ui_FriendRequestsWindow.h ui_FriendRequsetsItem.h ui_LoginWindow.h ui_RegisterWindow.h ui_SideBar.h ui_StatusBar.h $(OBJECTS) release/icon_res.o
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) @object_script.didactic-pancake-client.Release  $(LIBS)
+
+release/icon_res.o: ../didactic-pancake-client/icon.rc
+	windres -i ..\didactic-pancake-client\icon.rc -o release\icon_res.o --include-dir=./../didactic-pancake-client $(DEFINES)
 
 qmake: FORCE
 	@$(QMAKE) -o Makefile.Release ..\didactic-pancake-client\didactic-pancake-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
@@ -152,6 +155,7 @@ dist:
 
 clean: compiler_clean 
 	-$(DEL_FILE) release\AddFriendWindow.o release\BaseTitleBar.o release\BaseWindow.o release\FriendRequestsWindow.o release\FriendRequsetsItem.o release\LabelPlus.o release\LoginWindow.o release\RegisterWindow.o release\SideBar.o release\StatusBar.o release\SuspendedScrollbar.o release\TcpConnect.o release\main.o release\CustomMainWindow.o release\qrc_Resource.o release\moc_AddFriendWindow.o release\moc_BaseTitleBar.o release\moc_BaseWindow.o release\moc_CustomMainWindow.o release\moc_FriendRequestsWindow.o release\moc_FriendRequsetsItem.o release\moc_LabelPlus.o release\moc_LoginWindow.o release\moc_RegisterWindow.o release\moc_SideBar.o release\moc_StatusBar.o release\moc_SuspendedScrollbar.o release\moc_TcpConnect.o
+	-$(DEL_FILE) release\icon_res.o
 
 distclean: clean 
 	-$(DEL_FILE) .qmake.stash
@@ -198,8 +202,7 @@ release/qrc_Resource.cpp: ../didactic-pancake-client/Resource.qrc \
 		../didactic-pancake-client/resource/pancake.png \
 		../didactic-pancake-client/resource/m_pButtonMax_press.png \
 		../didactic-pancake-client/resource/default_avatar.png \
-		../didactic-pancake-client/resource/SuspendedScrollbar/scrollbar.qss \
-		../didactic-pancake-client/resource/SuspendedScrollbar/listwidget.qss
+		../didactic-pancake-client/resource/SuspendedScrollbar/scrollbar.qss
 	D:\QT\5.13.2\mingw73_64\bin\rcc.exe -name Resource ..\didactic-pancake-client\Resource.qrc -o release\qrc_Resource.cpp
 
 compiler_qmlcache_make_all:

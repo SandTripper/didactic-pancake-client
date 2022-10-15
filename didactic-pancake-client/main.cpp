@@ -4,27 +4,26 @@
 
 #include "CustomMainWindow.h"
 #include "LoginWindow.h"
-
 #include "FriendRequsetsItem.h"
 
 using namespace std;
-
-
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-//    FriendRequsetsItem x;
-//    x.show();
-//    return a.exec();
+    //设置任务栏图标
+    a.setWindowIcon(QIcon(":/resource/pancake.png"));
 
+    //首先运行登录窗口
     LoginWindow login;
-    string sessionID = login.exec();
-    //string sessionID = "111";
-    if (sessionID != "")
+    LoginData loginData = login.exec();
+    // string sessionID = "111";
+
+    if (loginData.sessionID != "") //登录成功，获取到sessionID，进入主窗口
     {
-        CustomMainWindow w(sessionID);
+        CustomMainWindow w(loginData.sessionID, loginData.username);
+        w.move(loginData.x, loginData.y); //移动到和登录窗口一样的位置
         w.show();
         return a.exec();
     }

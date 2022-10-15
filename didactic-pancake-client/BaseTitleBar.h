@@ -39,9 +39,6 @@ public:
     // 设置标题栏上按钮类型;
     void setButtonType(ButtonType buttonType);
 
-    // 设置标题栏中的标题是否会滚动;具体可以看效果;
-    void setTitleRoll();
-
     // 保存/获取 最大化前窗口的位置及大小;
     void saveRestoreInfo(const QPoint point, const QSize size);
     void getRestoreInfo(QPoint &point, QSize &size);
@@ -59,9 +56,6 @@ private:
     // 信号槽的绑定;
     void initConnections();
 
-    // 加载样式文件;
-    void loadStyleSheet(const QString &sheetName);
-
 signals:
     // 按钮触发的信号;
     void signalButtonMinClicked();
@@ -75,7 +69,6 @@ private slots:
     void onButtonRestoreClicked();
     void onButtonMaxClicked();
     void onButtonCloseClicked();
-    void onRollTitle();
 
 public:
     //相对于父窗口的横坐标
