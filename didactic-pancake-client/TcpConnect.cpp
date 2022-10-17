@@ -17,20 +17,26 @@ TcpConnect *TcpConnect::getInstance()
     return &tcpConn;
 }
 
-TcpConnect::TcpConnect()
+TcpConnect::TcpConnect() : m_sessionID(""),
+                           m_enable(1),
+                           m_client(new QTcpSocket),
+                           m_heartBeatNum(1),
+                           m_heartBeatNumRecv(1)
 {
-
     for (int i = 0; i < MAX_CATEGORY; i++)
     {
         vec.emplace_back(vector<DataPacket>());
     }
 
-    m_client = new QTcpSocket();
     connect(m_client, &QTcpSocket::readyRead, this, &TcpConnect::read_handler);
+    connect(this, &TcpConnect::HBTpackAdd, this, &TcpConnect::HBTpackHandler);
+    connect(this, &TcpConnect::disconnected, this, &TcpConnect::reconnect);
+    connect(this, &TcpConnect::reconnected, this, &TcpConnect::relogin);
 
     m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
-}
 
+    checkConnect();
+}
 
 TcpConnect::~TcpConnect()
 {
@@ -56,11 +62,12 @@ const char *TcpConnect::ReqToString(TcpConnect::REQUEST r)
         return "ADF";
     case RFR:
         return "RFR";
+    case RCN:
+        return "RCN";
     default:
         return "ERR";
     }
 }
-
 
 void TcpConnect::initRead()
 {
@@ -97,7 +104,7 @@ void TcpConnect::read_handler()
         switch (m_method)
         {
         case HBT:
-            // emit HBTpackAdd();
+            emit HBTpackAdd();
             break;
         case LGN:
             emit LGNpackAdd();
@@ -114,11 +121,83 @@ void TcpConnect::read_handler()
         case RFR:
             emit RFRpackAdd();
             break;
+        case RCN:
+            emit RCNpackAdd();
+            break;
         default:
             break;
         }
 
         initRead();
+    }
+}
+
+void TcpConnect::HBTpackHandler()
+{
+    for (const auto data : vec[TcpConnect::HBT])
+    {
+        if (data.content_len == 0)
+            continue;
+        m_heartBeatNumRecv = max(m_heartBeatNumRecv, stoi(string(data.content, data.content + data.content_len - 2)));
+    }
+    vec[TcpConnect::HBT].clear();
+}
+
+void TcpConnect::reconnect()
+{
+    m_client->close();
+
+    m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
+}
+
+void TcpConnect::relogin()
+{
+    if (m_sessionID != "")
+    {
+        QString content = m_sessionID + "\r\n";
+        // QString转char
+        char *ctmp;
+        QByteArray ba = content.toLatin1();
+        ctmp = ba.data();
+        write_data(DataPacket(RCN, content.length(), ctmp));
+    }
+    m_enable = true;
+}
+
+void TcpConnect::checkConnect()
+{
+    QString content = QString::number(++m_heartBeatNum);
+    content += "\r\n";
+
+    // QString转char
+    char *ctmp;
+    QByteArray ba = content.toLatin1();
+    ctmp = ba.data();
+    write_data(DataPacket(HBT, content.length(), ctmp));
+
+    QTimer::singleShot(LONGEST_REPLY_INTERVAL * 1000, this, [=]()
+                       {
+        if(m_heartBeatNumRecv<m_heartBeatNum)
+        {
+            emit disconnected();
+            m_enable=false;
+        }
+        else
+        {
+            if(m_enable==false)
+            {
+                emit reconnected();
+            }
+        } });
+    if (m_enable)
+    {
+        QTimer::singleShot(HBT_INTERVAL * 1000, this, [=]()
+                           { checkConnect(); });
+    }
+    else
+    {
+        QTimer::singleShot(RECONNECT_INTERVAL * 1000, this, [=]()
+                           { checkConnect(); });
     }
 }
 
@@ -233,6 +312,10 @@ TcpConnect::RESULT_CODE TcpConnect::parse_request_line(char *text)
     else if (strcasecmp(method, "RFR") == 0)
     {
         m_method = RFR;
+    }
+    else if (strcasecmp(method, "RCN") == 0)
+    {
+        m_method = RCN;
     }
     else
     {
@@ -386,7 +469,6 @@ bool TcpConnect::add_content_length(int content_length)
 {
     return add_response("Content-Length: %d\r\n", content_length);
 }
-
 
 bool TcpConnect::add_blank_line()
 {

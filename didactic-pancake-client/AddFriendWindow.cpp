@@ -32,6 +32,7 @@ void AddFriendWindow::initThis()
 {
     connect(m_connect, &TcpConnect::SCUpackAdd, this, &AddFriendWindow::checkSearch);
     connect(m_connect, &TcpConnect::ADFpackAdd, this, &AddFriendWindow::checkAddFriend);
+    connect(m_connect, &TcpConnect::disconnected, this, &AddFriendWindow::handleDisconnected);
 
     //设置高度
     setFixedHeight(NO_SEARCH_RESULT_HEIGHT);
@@ -123,6 +124,12 @@ void AddFriendWindow::closeEvent(QCloseEvent *event)
 
 void AddFriendWindow::on_btn_search_clicked()
 {
+    if(!m_connect->m_enable)//如果与服务器的连接不可用
+    {
+        ui->lbl_wrongtip->setText("无法连接到服务器!");
+        return;
+    }
+
     //禁用搜索按钮和搜索框
     ui->btn_search->setDisabled(true);
     ui->edit_user_name->setDisabled(true);
@@ -153,6 +160,12 @@ void AddFriendWindow::on_btn_search_clicked()
 
 void AddFriendWindow::on_btn_add_friend_clicked()
 {
+    if(!m_connect->m_enable)//如果与服务器的连接不可用
+    {
+        ui->lbl_wrongtip->setText("无法连接到服务器!");
+        return;
+    }
+
     //禁用搜索按钮和搜索框和添加好友按钮
     ui->btn_search->setDisabled(true);
     ui->edit_user_name->setDisabled(true);
@@ -168,6 +181,16 @@ void AddFriendWindow::on_btn_add_friend_clicked()
     QByteArray ba = content.toLatin1();
     ctmp = ba.data();
     m_connect->write_data(DataPacket(TcpConnect::ADF, content.length(),ctmp));
+}
+
+void AddFriendWindow::handleDisconnected()
+{
+    //启用搜索按钮和搜索框和添加好友按钮
+    ui->btn_search->setDisabled(false);
+    ui->edit_user_name->setDisabled(false);
+    ui->btn_add_friend->setDisabled(false);
+
+    ui->lbl_wrongtip->setText("无法连接到服务器!");
 }
 
 void AddFriendWindow::checkSearch()

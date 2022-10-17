@@ -4321,6 +4321,15 @@ debug/AddFriendWindow.o: ../didactic-pancake-client/AddFriendWindow.cpp D:/QT/5.
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
 		ui_AddFriendWindow.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QLineEdit \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlineedit.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextcursor.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextformat.h \
 		../didactic-pancake-client/LabelPlus.h \
 		../didactic-pancake-client/RegisterWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\AddFriendWindow.o ..\didactic-pancake-client\AddFriendWindow.cpp
@@ -4926,6 +4935,11 @@ debug/FriendRequestsWindow.o: ../didactic-pancake-client/FriendRequestsWindow.cp
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		ui_FriendRequestsWindow.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
 		../didactic-pancake-client/LabelPlus.h \
 		../didactic-pancake-client/RegisterWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\FriendRequestsWindow.o ..\didactic-pancake-client\FriendRequestsWindow.cpp
@@ -5245,6 +5259,17 @@ debug/FriendRequsetsItem.o: ../didactic-pancake-client/FriendRequsetsItem.cpp ..
 		D:/QT/5.13.2/mingw73_64/include/QtNetwork/qudpsocket.h \
 		D:/QT/5.13.2/mingw73_64/include/QtNetwork/qtnetworkversion.h \
 		ui_FriendRequsetsItem.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QLabel \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlabel.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QPushButton \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		../didactic-pancake-client/LabelPlus.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/QPainter \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qpainter.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextoption.h \
@@ -5674,6 +5699,17 @@ debug/LoginWindow.o: ../didactic-pancake-client/LoginWindow.cpp D:/QT/5.13.2/min
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
 		ui_LoginWindow.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QCheckBox \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qcheckbox.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QLineEdit \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlineedit.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextcursor.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextformat.h \
 		../didactic-pancake-client/LabelPlus.h \
 		../didactic-pancake-client/RegisterWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\LoginWindow.o ..\didactic-pancake-client\LoginWindow.cpp
@@ -5991,6 +6027,15 @@ debug/RegisterWindow.o: ../didactic-pancake-client/RegisterWindow.cpp D:/QT/5.13
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QTimer \
 		ui_RegisterWindow.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QLineEdit \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlineedit.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextcursor.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextformat.h \
 		../didactic-pancake-client/LabelPlus.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\RegisterWindow.o ..\didactic-pancake-client\RegisterWindow.cpp
 
@@ -6099,6 +6144,22 @@ debug/SideBar.o: ../didactic-pancake-client/SideBar.cpp ../didactic-pancake-clie
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qvector2d.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qtouchdevice.h \
 		ui_SideBar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/QVariant \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/qcoreapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtCore/qeventloop.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QPushButton \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qpushbutton.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qicon.h \
+		../didactic-pancake-client/LabelPlus.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QLabel \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qlabel.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qframe.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/QPainter \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qpainter.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qtextoption.h \
@@ -6435,6 +6496,11 @@ debug/StatusBar.o: ../didactic-pancake-client/StatusBar.cpp ../didactic-pancake-
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		ui_StatusBar.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
 		../didactic-pancake-client/AddFriendWindow.h \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/QPainter \
 		D:/QT/5.13.2/mingw73_64/include/QtGui/qpainter.h \
@@ -7510,6 +7576,11 @@ debug/CustomMainWindow.o: ../didactic-pancake-client/CustomMainWindow.cpp ../did
 		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qscrollarea.h \
 		D:/QT/5.13.2/mingw73_64/include/QtCore/QPropertyAnimation \
 		ui_CustomMainWindow.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/QApplication \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qguiapplication.h \
+		D:/QT/5.13.2/mingw73_64/include/QtGui/qinputmethod.h \
 		../didactic-pancake-client/LoginWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\CustomMainWindow.o ..\didactic-pancake-client\CustomMainWindow.cpp
 

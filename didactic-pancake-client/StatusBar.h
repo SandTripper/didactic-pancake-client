@@ -55,6 +55,9 @@ private:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
+    //设置网络状态
+    void setNetStatus(int status);
+
 private:
     // 移动窗口的变量;
     bool m_isPressed;

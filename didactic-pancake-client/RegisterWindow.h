@@ -36,6 +36,8 @@ private slots:
     void on_btn_register_clicked();
     //检查服务器的注册回复
     void checkRegister();
+    //处理断联
+    void handleDisconnected();
 
 private:
     //初始化本窗口

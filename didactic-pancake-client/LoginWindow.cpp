@@ -30,6 +30,7 @@ LoginWindow::~LoginWindow()
 void LoginWindow::initThis()
 {
     connect(m_connect, &TcpConnect::LGNpackAdd, this, &LoginWindow::checkLogin);
+    connect(m_connect, &TcpConnect::disconnected, this, &LoginWindow::handleDisconnected);
 
     //设置背景颜色
     setBackgroundColor(255, 255, 255);
@@ -120,6 +121,11 @@ void LoginWindow::closeEvent(QCloseEvent *event)
 
 void LoginWindow::on_btn_login_clicked()
 {
+    if (!m_connect->m_enable) //如果与服务器的连接不可用
+    {
+        ui->lbl_wrongtip->setText("无法连接到服务器!");
+        return;
+    }
     //禁用登录,输入框，单选框，注册按钮
     ui->btn_login->setDisabled(true);
     ui->edit_username->setDisabled(true);
@@ -243,6 +249,8 @@ void LoginWindow::checkLogin()
         m_connect->vec[TcpConnect::LGN].clear();
         ui->lbl_wrongtip->setStyleSheet("QLabel{color:rgb(25,198,136)}");
         ui->lbl_wrongtip->setText("登录成功！");
+
+        m_connect->m_sessionID = m_session;
         //锁死页面
         setDisabled(true);
         QTimer::singleShot(500, this, [=]()
@@ -250,4 +258,16 @@ void LoginWindow::checkLogin()
         return;
     }
     m_connect->vec[TcpConnect::LGN].clear();
+}
+
+void LoginWindow::handleDisconnected()
+{
+    //启用登录,输入框，单选框，注册按钮
+    ui->btn_login->setDisabled(false);
+    ui->edit_username->setDisabled(false);
+    ui->edit_password->setDisabled(false);
+    ui->chk_remember_user->setDisabled(false);
+    ui->lbl_register->setDisabled(false);
+
+    ui->lbl_wrongtip->setText("无法连接到服务器!");
 }

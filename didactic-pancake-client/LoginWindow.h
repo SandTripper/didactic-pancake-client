@@ -46,6 +46,8 @@ private slots:
     void on_lbl_register_clicked();
     //检查服务器传回的登录回复
     void checkLogin();
+    //处理断联
+    void handleDisconnected();
 
 private:
     //初始化本窗口

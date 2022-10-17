@@ -8,14 +8,19 @@
 
 class DataPacket;
 
-
 class TcpConnect : public QObject
 {
     Q_OBJECT
 
 public:
     //心跳包发送间隔
-    static const int HBTtime = 15;
+    static const int HBT_INTERVAL = 6;
+
+    //重连间隔
+    static const int RECONNECT_INTERVAL = 6;
+
+    //最长回复间隔
+    static const int LONGEST_REPLY_INTERVAL = 5;
 
     //最大的数据包类型数
     static const int MAX_CATEGORY = 128;
@@ -33,6 +38,7 @@ public:
      SCU表示查找用户请求；
      ADF表示添加好友请求；
      RFR表示回复好友请求；
+     RCN表示重连请求；
      */
     enum REQUEST
     {
@@ -43,6 +49,7 @@ public:
         SCU,
         ADF,
         RFR,
+        RCN,
     };
 
     //主状态机的两种可能状态，分别表示：当前正在分析请求行，当前正在分析内容
@@ -78,6 +85,11 @@ public:
 
     //存储读到的包
     std::vector<std::vector<DataPacket>> vec;
+
+    QString m_sessionID;
+
+    //连接是否可用
+    int m_enable;
 
 public:
     //返回全局唯一实例
@@ -125,16 +137,34 @@ private:
     bool add_blank_line();
 
 signals:
-    // void HBTpackAdd();
+    void HBTpackAdd();
     void LGNpackAdd();
     void RGTpackAdd();
     void SCUpackAdd();
     void ADFpackAdd();
     void RFRpackAdd();
+    void RCNpackAdd();
+    //断线
+    void disconnected();
+    //重连成功
+    void reconnected();
 
-protected slots:
+private slots:
     //读取并处理新到的数据
     void read_handler();
+
+    //处理服务器返回的HBT包
+    void HBTpackHandler();
+
+    //尝试重连
+    void reconnect();
+
+    //尝试重新登录
+    void relogin();
+
+private:
+    //循环检测网络状况
+    void checkConnect();
 
 private:
     QTcpSocket *m_client;
@@ -173,6 +203,12 @@ private:
 
     //存储数据正文
     char *m_string;
+
+    //当前发送的心跳包编号
+    int m_heartBeatNum;
+
+    //接收到的最大的心跳包编号
+    int m_heartBeatNumRecv;
 };
 
 //数据包类
@@ -189,25 +225,25 @@ public:
     {
         category = cat;
         content_len = strlen(con);
-        content = new char[content_len+1];
+        content = new char[content_len + 1];
         strncpy(content, con, content_len);
-        content[content_len]='\0';
+        content[content_len] = '\0';
     }
     DataPacket(TcpConnect::REQUEST cat, int conlen, const char *con)
     {
         category = cat;
         content_len = conlen;
-        content = new char[conlen+1];
+        content = new char[conlen + 1];
         strncpy(content, con, conlen);
-        content[content_len]='\0';
+        content[content_len] = '\0';
     }
     DataPacket(const DataPacket &other)
     {
         category = other.category;
         content_len = other.content_len;
-        content = new char[content_len+1];
+        content = new char[content_len + 1];
         strncpy(content, other.content, content_len);
-        content[content_len]='\0';
+        content[content_len] = '\0';
     }
     ~DataPacket()
     {

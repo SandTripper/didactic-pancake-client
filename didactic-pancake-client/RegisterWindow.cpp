@@ -30,7 +30,7 @@ RegisterWindow::~RegisterWindow()
 void RegisterWindow::initThis()
 {
     connect(m_connect, &TcpConnect::RGTpackAdd, this, &RegisterWindow::checkRegister);
-
+    connect(m_connect, &TcpConnect::disconnected, this, &RegisterWindow::handleDisconnected);
     setBackgroundColor(255, 255, 255); //设置窗口背景颜色
 }
 
@@ -106,6 +106,11 @@ void RegisterWindow::closeEvent(QCloseEvent *event)
 
 void RegisterWindow::on_btn_register_clicked()
 {
+    if (!m_connect->m_enable) //如果与服务器的连接不可用
+    {
+        ui->lbl_wrongtip->setText("无法连接到服务器!");
+        return;
+    }
     //禁用注册按钮，输入框
     ui->btn_register->setDisabled(true);
     ui->edit_username->setDisabled(true);
@@ -202,4 +207,15 @@ void RegisterWindow::checkRegister()
     ui->edit_username->setDisabled(false);
     ui->edit_password1->setDisabled(false);
     ui->edit_password2->setDisabled(false);
+}
+
+void RegisterWindow::handleDisconnected()
+{
+    //启用注册按钮，输入框
+    ui->btn_register->setDisabled(false);
+    ui->edit_username->setDisabled(false);
+    ui->edit_password1->setDisabled(false);
+    ui->edit_password2->setDisabled(false);
+
+    ui->lbl_wrongtip->setText("无法连接到服务器!");
 }

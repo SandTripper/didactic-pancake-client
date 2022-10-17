@@ -23,7 +23,6 @@ class FriendRequestsWindow : public BaseWindow
     Q_OBJECT
 
 public:
-
     explicit FriendRequestsWindow(QWidget *parent = nullptr);
 
     ~FriendRequestsWindow();
@@ -52,7 +51,6 @@ private:
 
     //指向和服务器连接的对象
     TcpConnect *m_connect;
-
 };
 
 #endif // FRIENDREQUESTSWINDOW_H

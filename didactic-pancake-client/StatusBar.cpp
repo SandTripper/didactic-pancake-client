@@ -29,6 +29,12 @@ void StatusBar::initThis()
 {
     connect(m_connect, &TcpConnect::RFRpackAdd, this, &StatusBar::showRedPoint);
 
+    connect(m_connect, &TcpConnect::disconnected, this, [=]()
+            { setNetStatus(0); });
+
+    connect(m_connect, &TcpConnect::RCNpackAdd, this, [=]()
+            { setNetStatus(1); });
+
     //设置窗口无边框
     setWindowFlags(Qt::FramelessWindowHint);
 }
@@ -131,6 +137,33 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 {
     m_isPressed = false;
     return QWidget::mouseReleaseEvent(event);
+}
+
+void StatusBar::setNetStatus(int status)
+{
+    QString qss_btn_network_status;
+    switch (status)
+    {
+    case 0: //断线
+        qss_btn_network_status =
+            "QPushButton{background-color:rgb(197,34,31);}"
+            "QPushButton{color: rgb(255,255,255); }"
+            "QPushButton{border-radius: 12px;}";
+        ui->btn_network_status->setStyleSheet(qss_btn_network_status);
+        ui->btn_network_status->setText("断线");
+        break;
+    case 1: //优秀
+        qss_btn_network_status =
+            "QPushButton{background-color:rgb(25,198,136);}"
+            "QPushButton{color: rgb(255,255,255); }"
+            "QPushButton{border-radius: 12px;}";
+        ui->btn_network_status->setStyleSheet(qss_btn_network_status);
+        ui->btn_network_status->setText("优秀");
+        break;
+    default:
+        break;
+    }
+    update();
 }
 
 void StatusBar::on_btn_add_friend_clicked()

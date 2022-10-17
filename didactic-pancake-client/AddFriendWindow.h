@@ -47,6 +47,8 @@ private slots:
     void on_btn_search_clicked();
     //按下添加好友按钮
     void on_btn_add_friend_clicked();
+    //处理断联
+    void handleDisconnected();
 
 private:
     //初始化本窗口

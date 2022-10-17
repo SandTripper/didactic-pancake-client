@@ -17,22 +17,23 @@ class SuspendedScrollBar : public QScrollBar
 {
     Q_OBJECT
 public:
-    explicit SuspendedScrollBar(Qt::Orientation t , QWidget * parent = 0);
-    ~SuspendedScrollBar(){}
+    explicit SuspendedScrollBar(Qt::Orientation t, QWidget *parent = 0);
+    ~SuspendedScrollBar() {}
 public slots:
     void slt_valueChange_scrollBar(int);
-    void slt_rangeChanged(int min,int max);
+    void slt_rangeChanged(int min, int max);
 };
 
-//QListWidget 悬浮滚动条基类
+// QListWidget 悬浮滚动条基类
 class SuspendedScrollBar_ListWidget : public QListWidget
 {
     Q_OBJECT
 public:
-    explicit SuspendedScrollBar_ListWidget(QWidget * parent = 0);
-    ~SuspendedScrollBar_ListWidget(){}
+    explicit SuspendedScrollBar_ListWidget(QWidget *parent = 0);
+    ~SuspendedScrollBar_ListWidget() {}
+
 private:
-    SuspendedScrollBar * m_pVertScrollBar;//悬浮滚动条
+    SuspendedScrollBar *m_pVertScrollBar; //悬浮滚动条
 
 public slots:
     void slt_valueChange_widget(int);
@@ -43,15 +44,16 @@ protected:
     void leaveEvent(QEvent *);
 };
 
-//QScrollArea 悬浮滚动条基类
+// QScrollArea 悬浮滚动条基类
 class SuspendedScrollBar_Area : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit SuspendedScrollBar_Area(QWidget * parent = 0);
-    ~SuspendedScrollBar_Area(){}
+    explicit SuspendedScrollBar_Area(QWidget *parent = 0);
+    ~SuspendedScrollBar_Area() {}
+
 private:
-    SuspendedScrollBar * m_pVertScrollBar;//悬浮滚动条
+    SuspendedScrollBar *m_pVertScrollBar; //悬浮滚动条
 public slots:
     void slt_valueChange_widget(int);
 

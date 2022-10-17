@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 
     //设置任务栏图标
     a.setWindowIcon(QIcon(":/resource/pancake.png"));
+    qApp->setStyleSheet("*{outline:0px;}");
 
     //首先运行登录窗口
     LoginWindow login;

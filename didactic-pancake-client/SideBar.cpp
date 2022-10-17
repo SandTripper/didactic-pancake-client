@@ -4,11 +4,10 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-SideBar::SideBar(QWidget *parent) :
-    QWidget(parent),
-    m_isMaxWindow(false),
-    m_colorR(0), m_colorG(0), m_colorB(0),
-    ui(new Ui::SideBar)
+SideBar::SideBar(QWidget *parent) : QWidget(parent),
+                                    m_isMaxWindow(false),
+                                    m_colorR(0), m_colorG(0), m_colorB(0),
+                                    ui(new Ui::SideBar)
 {
     ui->setupUi(this);
 
@@ -36,20 +35,19 @@ void SideBar::initThis()
     setWindowFlags(Qt::FramelessWindowHint);
 }
 
-
 void SideBar::initControl()
 {
     //侧边栏单选按钮
     QString qss_btn_change_to_chat =
-            "QPushButton{border-image: url(:/resource/btn_change_to_chat_normal.png)}"          //默认
-            "QPushButton:hover{border-image: url(:/resource/btn_change_to_chat_hover.png)}"     //鼠标hover
-            "QPushButton:pressed{border-image: url(:/resource/btn_change_to_chat_press.png)}"   //鼠标点击
-            "QPushButton:disabled{border-image: url(:/resource/btn_change_to_chat_press.png)}"; //不可用
+        "QPushButton{border-image: url(:/resource/btn_change_to_chat_normal.png)}"          //默认
+        "QPushButton:hover{border-image: url(:/resource/btn_change_to_chat_hover.png)}"     //鼠标hover
+        "QPushButton:pressed{border-image: url(:/resource/btn_change_to_chat_press.png)}"   //鼠标点击
+        "QPushButton:disabled{border-image: url(:/resource/btn_change_to_chat_press.png)}"; //不可用
     QString qss_btn_change_to_friend =
-            "QPushButton{border-image: url(:/resource/btn_change_to_friend_normal.png)}"          //默认
-            "QPushButton:hover{border-image: url(:/resource/btn_change_to_friend_hover.png)}"     //鼠标hover
-            "QPushButton:pressed{border-image: url(:/resource/btn_change_to_friend_press.png)}"   //鼠标点击
-            "QPushButton:disabled{border-image: url(:/resource/btn_change_to_friend_press.png)}"; //不可用
+        "QPushButton{border-image: url(:/resource/btn_change_to_friend_normal.png)}"          //默认
+        "QPushButton:hover{border-image: url(:/resource/btn_change_to_friend_hover.png)}"     //鼠标hover
+        "QPushButton:pressed{border-image: url(:/resource/btn_change_to_friend_press.png)}"   //鼠标点击
+        "QPushButton:disabled{border-image: url(:/resource/btn_change_to_friend_press.png)}"; //不可用
 
     ui->btn_change_to_chat->setStyleSheet(qss_btn_change_to_chat);
     ui->btn_change_to_friend->setStyleSheet(qss_btn_change_to_friend);
@@ -128,4 +126,3 @@ void SideBar::on_btn_change_to_friend_clicked()
     ui->btn_change_to_chat->setDisabled(false);
     ui->btn_change_to_friend->setDisabled(true);
 }
-
