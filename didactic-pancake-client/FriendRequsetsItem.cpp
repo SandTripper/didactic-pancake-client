@@ -45,6 +45,7 @@ void FriendRequsetsItem::initControl()
         "QPushButton:disabled{color: rgb(255,255,255); }"
         "QPushButton:disabled{border-radius: 3px;}";
     ui->btn_accept->setStyleSheet(qss_btn_accept);
+    ui->btn_accept->setCursor(QCursor(Qt::PointingHandCursor));
 
     //拒绝按钮
     QString qss_btn_reject =
@@ -61,6 +62,7 @@ void FriendRequsetsItem::initControl()
         "QPushButton:disabled{color: rgb(255,255,255); }"
         "QPushButton:disabled{border-radius: 3px;}";
     ui->btn_reject->setStyleSheet(qss_btn_reject);
+    ui->btn_reject->setCursor(QCursor(Qt::PointingHandCursor));
 
     //初始化申请者头像
     ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
@@ -150,6 +152,7 @@ void FriendRequsetsListWidget::addRequest(const QString &username)
     addItem(pItem);
     pItem->setSizeHint(QSize(0, w_item->height()));
     setItemWidget(pItem, w_item);
+    pItem->setText(username);
 }
 
 void FriendRequsetsListWidget::deleteRequest(QListWidgetItem *object)

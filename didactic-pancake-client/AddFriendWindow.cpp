@@ -11,9 +11,9 @@
 using namespace std;
 
 AddFriendWindow::AddFriendWindow(QWidget *parent) : BaseWindow(parent),
-    ui(new Ui::AddFriendWindow),
-    m_connect(TcpConnect::getInstance()),
-    m_query_user_name("")
+                                                    ui(new Ui::AddFriendWindow),
+                                                    m_connect(TcpConnect::getInstance()),
+                                                    m_query_user_name("")
 
 {
     ui->setupUi(this);
@@ -53,44 +53,46 @@ void AddFriendWindow::initControl()
     //用以用户名的格式限制
     QRegExpValidator *pRevalidotor = new QRegExpValidator(QRegExp("[a-zA-Z0-9]{16}"), this);
     QString qss_edit_user_name =
-            "QLineEdit{border: 1px solid rgb(25,198,136);}" //边框粗细和颜色
-            "QLineEdit{padding-left: 5px; }"                //文本和左边界的距离
-            "QLineEdit{border-radius: 3px;}";               //圆角半径
+        "QLineEdit{border: 1px solid rgb(25,198,136);}" //边框粗细和颜色
+        "QLineEdit{padding-left: 5px; }"                //文本和左边界的距离
+        "QLineEdit{border-radius: 3px;}";               //圆角半径
     ui->edit_user_name->setStyleSheet(qss_edit_user_name);
     ui->edit_user_name->setValidator(pRevalidotor);
 
     //搜索按钮
     QString qss_btn_search =
-            "QPushButton{background-color:rgb(25,198,136);}" //按钮颜色
-            "QPushButton{color: rgb(255,255,255); }"        //按钮文字颜色
-            "QPushButton{border-radius: 15px;}"             //按钮圆角半径
-            "QPushButton:hover{background-color:rgb(20,168,106);}"
-            "QPushButton:hover{color: rgb(255,255,255); }"
-            "QPushButton:hover{border-radius: 15px;}"
-            "QPushButton:pressed{background-color:rgb(15,138,76);}"
-            "QPushButton:pressed{color: rgb(255,255,255); }"
-            "QPushButton:pressed{border-radius: 15px;}"
-            "QPushButton:disabled{background-color:rgb(143,217,152);}"
-            "QPushButton:disabled{color: rgb(255,255,255); }"
-            "QPushButton:disabled{border-radius: 15px;}";
+        "QPushButton{background-color:rgb(25,198,136);}" //按钮颜色
+        "QPushButton{color: rgb(255,255,255); }"         //按钮文字颜色
+        "QPushButton{border-radius: 15px;}"              //按钮圆角半径
+        "QPushButton:hover{background-color:rgb(20,168,106);}"
+        "QPushButton:hover{color: rgb(255,255,255); }"
+        "QPushButton:hover{border-radius: 15px;}"
+        "QPushButton:pressed{background-color:rgb(15,138,76);}"
+        "QPushButton:pressed{color: rgb(255,255,255); }"
+        "QPushButton:pressed{border-radius: 15px;}"
+        "QPushButton:disabled{background-color:rgb(143,217,152);}"
+        "QPushButton:disabled{color: rgb(255,255,255); }"
+        "QPushButton:disabled{border-radius: 15px;}";
     ui->btn_search->setStyleSheet(qss_btn_search);
+    ui->btn_search->setCursor(QCursor(Qt::PointingHandCursor));
 
     //添加好友按钮
     QString qss_btn_add_friend =
-            "QPushButton{background-color:rgb(25,198,136);}" //按钮颜色
-            "QPushButton{color: rgb(255,255,255); }"            //按钮文字颜色
-            "QPushButton{border-radius: 15px;}"                 //按钮圆角半径
-            "QPushButton:hover{background-color:rgb(20,168,106);}"
-            "QPushButton:hover{color: rgb(255,255,255); }"
-            "QPushButton:hover{border-radius: 15px;}"
-            "QPushButton:pressed{background-color:rgb(15,138,76);}"
-            "QPushButton:pressed{color: rgb(255,255,255); }"
-            "QPushButton:pressed{border-radius: 15px;}"
-            "QPushButton:disabled{background-color:rgb(143,217,152);}"
-            "QPushButton:disabled{color: rgb(255,255,255); }"
-            "QPushButton:disabled{border-radius: 15px;}";
-    ui->btn_add_friend ->setStyleSheet(qss_btn_add_friend);
-    ui->btn_add_friend ->setVisible(false);
+        "QPushButton{background-color:rgb(25,198,136);}" //按钮颜色
+        "QPushButton{color: rgb(255,255,255); }"         //按钮文字颜色
+        "QPushButton{border-radius: 15px;}"              //按钮圆角半径
+        "QPushButton:hover{background-color:rgb(20,168,106);}"
+        "QPushButton:hover{color: rgb(255,255,255); }"
+        "QPushButton:hover{border-radius: 15px;}"
+        "QPushButton:pressed{background-color:rgb(15,138,76);}"
+        "QPushButton:pressed{color: rgb(255,255,255); }"
+        "QPushButton:pressed{border-radius: 15px;}"
+        "QPushButton:disabled{background-color:rgb(143,217,152);}"
+        "QPushButton:disabled{color: rgb(255,255,255); }"
+        "QPushButton:disabled{border-radius: 15px;}";
+    ui->btn_add_friend->setStyleSheet(qss_btn_add_friend);
+    ui->btn_add_friend->setVisible(false);
+    ui->btn_add_friend->setCursor(QCursor(Qt::PointingHandCursor));
 
     //初始化搜索结果头像
     ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
@@ -100,7 +102,7 @@ void AddFriendWindow::initControl()
 
     //提示框
     QString qss_lbl_wrongtip =
-            "QLabel{color:rgb(197,34,31)};"; //默认
+        "QLabel{color:rgb(197,34,31)};"; //默认
     ui->lbl_wrongtip->setStyleSheet(qss_lbl_wrongtip);
 }
 
@@ -124,7 +126,7 @@ void AddFriendWindow::closeEvent(QCloseEvent *event)
 
 void AddFriendWindow::on_btn_search_clicked()
 {
-    if(!m_connect->m_enable)//如果与服务器的连接不可用
+    if (!m_connect->m_enable) //如果与服务器的连接不可用
     {
         ui->lbl_wrongtip->setText("无法连接到服务器!");
         return;
@@ -137,7 +139,7 @@ void AddFriendWindow::on_btn_search_clicked()
     ui->lbl_wrongtip->setStyleSheet("QLabel{color:rgb(197,34,31)};");
     ui->lbl_wrongtip->setText("");
 
-    if (ui->edit_user_name->text() == "")//用户名为空
+    if (ui->edit_user_name->text() == "") //用户名为空
     {
         ui->lbl_wrongtip->setText("用户名不得为空");
         //启用搜索按钮和搜索框
@@ -160,7 +162,7 @@ void AddFriendWindow::on_btn_search_clicked()
 
 void AddFriendWindow::on_btn_add_friend_clicked()
 {
-    if(!m_connect->m_enable)//如果与服务器的连接不可用
+    if (!m_connect->m_enable) //如果与服务器的连接不可用
     {
         ui->lbl_wrongtip->setText("无法连接到服务器!");
         return;
@@ -174,13 +176,13 @@ void AddFriendWindow::on_btn_add_friend_clicked()
     ui->lbl_wrongtip->setStyleSheet("QLabel{color:rgb(197,34,31)};");
     ui->lbl_wrongtip->setText("");
 
-     //发送添加好友请求给服务器
+    //发送添加好友请求给服务器
     QString content = ui->lbl_user_name->text() + "\r\n";
     // QString转char*
     char *ctmp;
     QByteArray ba = content.toLatin1();
     ctmp = ba.data();
-    m_connect->write_data(DataPacket(TcpConnect::ADF, content.length(),ctmp));
+    m_connect->write_data(DataPacket(TcpConnect::ADF, content.length(), ctmp));
 }
 
 void AddFriendWindow::handleDisconnected()
@@ -199,7 +201,7 @@ void AddFriendWindow::checkSearch()
     {
         if (data.content_len == 0)
             continue;
-        if (strncmp(data.content, "-2", 2) == 0)//格式错误
+        if (strncmp(data.content, "-2", 2) == 0) //格式错误
         {
             ui->lbl_wrongtip->setText("格式错误");
 
@@ -209,7 +211,7 @@ void AddFriendWindow::checkSearch()
 
             continue;
         }
-        if (strncmp(data.content, "0", 1) == 0)//该用户名不存在
+        if (strncmp(data.content, "0", 1) == 0) //该用户名不存在
         {
             ui->lbl_wrongtip->setText("该用户名不存在");
 
@@ -303,9 +305,3 @@ void AddFriendWindow::checkAddFriend()
     ui->edit_user_name->setDisabled(false);
     ui->btn_add_friend->setDisabled(false);
 }
-
-
-
-
-
-

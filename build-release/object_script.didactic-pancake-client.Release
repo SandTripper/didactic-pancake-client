@@ -1,6 +1,9 @@
 release/AddFriendWindow.o
 release/BaseTitleBar.o
 release/BaseWindow.o
+release/FriendBar.o
+release/FriendInformation.o
+release/FriendItem.o
 release/FriendRequestsWindow.o
 release/FriendRequsetsItem.o
 release/LabelPlus.o
@@ -17,6 +20,9 @@ release/moc_AddFriendWindow.o
 release/moc_BaseTitleBar.o
 release/moc_BaseWindow.o
 release/moc_CustomMainWindow.o
+release/moc_FriendBar.o
+release/moc_FriendInformation.o
+release/moc_FriendItem.o
 release/moc_FriendRequestsWindow.o
 release/moc_FriendRequsetsItem.o
 release/moc_LabelPlus.o

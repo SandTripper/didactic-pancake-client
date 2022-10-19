@@ -8,6 +8,8 @@
 #include "TcpConnect.h"
 #include "SideBar.h"
 #include "StatusBar.h"
+#include "FriendBar.h"
+#include "FriendInformation.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -39,6 +41,10 @@ private:
     void initSideBar();
     //初始化状态栏
     void initStatusBar();
+    //初始化状态栏
+    void initFriendBar();
+    //初始化好友信息栏
+    void initFriendInformationBar();
 
     Ui::CustomMainWindow *ui;
 
@@ -53,6 +59,12 @@ private:
 
     //状态栏
     StatusBar *m_statusBar;
+
+    //好友栏
+    FriendBar *m_friendBar;
+
+    //好友信息栏
+    FriendInformation *m_friendInformation;
 };
 
 #endif // CUSTOMMAINWINDOW_H

@@ -61,6 +61,9 @@ void SideBar::initControl()
     ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
     ui->lbl_user_avatar->setScaledContents(true);
     ui->lbl_user_avatar->setCursor(QCursor(Qt::PointingHandCursor));
+
+    //默认选中聊天界面
+    on_btn_change_to_chat_clicked();
 }
 
 void SideBar::paintEvent(QPaintEvent *event)
@@ -118,6 +121,8 @@ void SideBar::on_btn_change_to_chat_clicked()
     //通过设置其他按钮是否可用实现单选效果
     ui->btn_change_to_friend->setDisabled(false);
     ui->btn_change_to_chat->setDisabled(true);
+
+    emit changeToChat();
 }
 
 void SideBar::on_btn_change_to_friend_clicked()
@@ -125,4 +130,6 @@ void SideBar::on_btn_change_to_friend_clicked()
     //通过设置其他按钮是否可用实现单选效果
     ui->btn_change_to_chat->setDisabled(false);
     ui->btn_change_to_friend->setDisabled(true);
+
+    emit changeToFriend();
 }

@@ -18,7 +18,7 @@ TcpConnect *TcpConnect::getInstance()
 }
 
 TcpConnect::TcpConnect() : m_sessionID(""),
-                           m_enable(1),
+                           m_enable(false),
                            m_client(new QTcpSocket),
                            m_heartBeatNum(1),
                            m_heartBeatNumRecv(1)
@@ -28,12 +28,19 @@ TcpConnect::TcpConnect() : m_sessionID(""),
         vec.emplace_back(vector<DataPacket>());
     }
 
+    connect(m_client, &QTcpSocket::disconnected, this, &TcpConnect::disconnected);
+
     connect(m_client, &QTcpSocket::readyRead, this, &TcpConnect::read_handler);
+    connect(m_client, &QTcpSocket::connected, this, &TcpConnect::reconnected);
     connect(this, &TcpConnect::HBTpackAdd, this, &TcpConnect::HBTpackHandler);
-    connect(this, &TcpConnect::disconnected, this, &TcpConnect::reconnect);
+    connect(this, &TcpConnect::disconnected, this, [=]()
+            {m_enable = false;reconnect(); });
     connect(this, &TcpConnect::reconnected, this, &TcpConnect::relogin);
 
-    m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
+    m_client->setProxy(QNetworkProxy::NoProxy);
+
+    //利用重连函数进行连接
+    reconnect();
 
     checkConnect();
 }
@@ -60,10 +67,18 @@ const char *TcpConnect::ReqToString(TcpConnect::REQUEST r)
         return "SCU";
     case ADF:
         return "ADF";
+    case DEF:
+        return "DEF";
     case RFR:
         return "RFR";
     case RCN:
         return "RCN";
+    case GFI:
+        return "GFI";
+    case AFI:
+        return "AFI";
+    case DFI:
+        return "DFI";
     default:
         return "ERR";
     }
@@ -118,11 +133,23 @@ void TcpConnect::read_handler()
         case ADF:
             emit ADFpackAdd();
             break;
+        case DEF:
+            emit DEFpackAdd();
+            break;
         case RFR:
             emit RFRpackAdd();
             break;
         case RCN:
             emit RCNpackAdd();
+            break;
+        case GFI:
+            emit GFIpackAdd();
+            break;
+        case AFI:
+            emit AFIpackAdd();
+            break;
+        case DFI:
+            emit DFIpackAdd();
             break;
         default:
             break;
@@ -145,9 +172,18 @@ void TcpConnect::HBTpackHandler()
 
 void TcpConnect::reconnect()
 {
+
+    if (m_enable)
+    {
+        return;
+    }
+
     m_client->close();
 
     m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
+
+    QTimer::singleShot(RECONNECT_INTERVAL * 1000, this, [=]()
+                       { reconnect(); });
 }
 
 void TcpConnect::relogin()
@@ -162,10 +198,17 @@ void TcpConnect::relogin()
         write_data(DataPacket(RCN, content.length(), ctmp));
     }
     m_enable = true;
+
+    checkConnect();
 }
 
 void TcpConnect::checkConnect()
 {
+    if (!m_enable)
+    {
+        return;
+    }
+
     QString content = QString::number(++m_heartBeatNum);
     content += "\r\n";
 
@@ -180,25 +223,10 @@ void TcpConnect::checkConnect()
         if(m_heartBeatNumRecv<m_heartBeatNum)
         {
             emit disconnected();
-            m_enable=false;
-        }
-        else
-        {
-            if(m_enable==false)
-            {
-                emit reconnected();
-            }
         } });
-    if (m_enable)
-    {
-        QTimer::singleShot(HBT_INTERVAL * 1000, this, [=]()
-                           { checkConnect(); });
-    }
-    else
-    {
-        QTimer::singleShot(RECONNECT_INTERVAL * 1000, this, [=]()
-                           { checkConnect(); });
-    }
+
+    QTimer::singleShot(HBT_INTERVAL * 1000, this, [=]()
+                       { checkConnect(); });
 }
 
 bool TcpConnect::read()
@@ -309,6 +337,10 @@ TcpConnect::RESULT_CODE TcpConnect::parse_request_line(char *text)
     {
         m_method = ADF;
     }
+    else if (strcasecmp(method, "DEF") == 0)
+    {
+        m_method = DEF;
+    }
     else if (strcasecmp(method, "RFR") == 0)
     {
         m_method = RFR;
@@ -316,6 +348,18 @@ TcpConnect::RESULT_CODE TcpConnect::parse_request_line(char *text)
     else if (strcasecmp(method, "RCN") == 0)
     {
         m_method = RCN;
+    }
+    else if (strcasecmp(method, "GFI") == 0)
+    {
+        m_method = GFI;
+    }
+    else if (strcasecmp(method, "AFI") == 0)
+    {
+        m_method = AFI;
+    }
+    else if (strcasecmp(method, "DFI") == 0)
+    {
+        m_method = DFI;
     }
     else
     {

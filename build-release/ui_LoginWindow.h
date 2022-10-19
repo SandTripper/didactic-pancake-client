@@ -88,7 +88,7 @@ public:
 
     void retranslateUi(QWidget *LoginWindow)
     {
-        LoginWindow->setWindowTitle(QCoreApplication::translate("LoginWindow", "Form", nullptr));
+        LoginWindow->setWindowTitle(QCoreApplication::translate("LoginWindow", "\347\231\273\345\275\225", nullptr));
         btn_login->setText(QCoreApplication::translate("LoginWindow", "\347\231\273\345\275\225", nullptr));
         edit_username->setPlaceholderText(QCoreApplication::translate("LoginWindow", "\347\224\250\346\210\267\345\220\215", nullptr));
         edit_password->setPlaceholderText(QCoreApplication::translate("LoginWindow", "\345\257\206\347\240\201", nullptr));

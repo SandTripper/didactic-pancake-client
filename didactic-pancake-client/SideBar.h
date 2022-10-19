@@ -25,6 +25,12 @@ public:
     //是否是最大化窗口
     bool m_isMaxWindow;
 
+signals:
+    //切换到聊天界面
+    void changeToChat();
+    //切换到好友界面
+    void changeToFriend();
+
 protected:
     // 侧边栏背景色;
     int m_colorR;

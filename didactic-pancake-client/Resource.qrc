@@ -28,5 +28,6 @@
         <file>resource/SuspendedScrollbar/scrollbar.qss</file>
         <file>resource/default_avatar.png</file>
         <file>resource/red_point.png</file>
+        <file>resource/pancake2.png</file>
     </qresource>
 </RCC>

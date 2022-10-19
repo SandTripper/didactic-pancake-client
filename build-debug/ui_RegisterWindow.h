@@ -77,7 +77,7 @@ public:
 
     void retranslateUi(QWidget *RegisterWindow)
     {
-        RegisterWindow->setWindowTitle(QCoreApplication::translate("RegisterWindow", "Form", nullptr));
+        RegisterWindow->setWindowTitle(QCoreApplication::translate("RegisterWindow", "\346\263\250\345\206\214", nullptr));
         btn_register->setText(QCoreApplication::translate("RegisterWindow", "\346\263\250\345\206\214", nullptr));
         edit_username->setPlaceholderText(QCoreApplication::translate("RegisterWindow", "\347\224\250\346\210\267\345\220\215", nullptr));
         edit_password1->setPlaceholderText(QCoreApplication::translate("RegisterWindow", "\345\257\206\347\240\201", nullptr));

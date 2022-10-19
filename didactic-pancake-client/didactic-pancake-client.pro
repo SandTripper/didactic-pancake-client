@@ -20,6 +20,9 @@ SOURCES += \
     AddFriendWindow.cpp \
     BaseTitleBar.cpp \
     BaseWindow.cpp \
+    FriendBar.cpp \
+    FriendInformation.cpp \
+    FriendItem.cpp \
     FriendRequestsWindow.cpp \
     FriendRequsetsItem.cpp \
     LabelPlus.cpp \
@@ -37,6 +40,9 @@ HEADERS += \
     BaseTitleBar.h \
     BaseWindow.h \
     CustomMainWindow.h \
+    FriendBar.h \
+    FriendInformation.h \
+    FriendItem.h \
     FriendRequestsWindow.h \
     FriendRequsetsItem.h \
     LabelPlus.h \
@@ -50,6 +56,9 @@ HEADERS += \
 FORMS += \
     AddFriendWindow.ui \
     CustomMainWindow.ui \
+    FriendBar.ui \
+    FriendInformation.ui \
+    FriendItem.ui \
     FriendRequestsWindow.ui \
     FriendRequsetsItem.ui \
     LoginWindow.ui \

@@ -14,12 +14,13 @@ int main(int argc, char *argv[])
 
     //设置任务栏图标
     a.setWindowIcon(QIcon(":/resource/pancake.png"));
+    //取消焦点虚线框
     qApp->setStyleSheet("*{outline:0px;}");
 
     //首先运行登录窗口
     LoginWindow login;
     LoginData loginData = login.exec();
-    // string sessionID = "111";
+    // LoginData loginData = LoginData{"111","admin",900,600};
 
     if (loginData.sessionID != "") //登录成功，获取到sessionID，进入主窗口
     {

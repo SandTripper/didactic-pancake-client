@@ -73,6 +73,7 @@ void StatusBar::initControl()
     ui->lbl_red_point->setPixmap(QPixmap(":/resource/red_point.png"));
     ui->lbl_red_point->setScaledContents(true);
     ui->lbl_red_point->setVisible(false);
+    ui->lbl_red_point->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
 void StatusBar::setBackgroundColor(int r, int g, int b)

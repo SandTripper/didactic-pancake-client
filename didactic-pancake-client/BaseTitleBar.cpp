@@ -195,7 +195,7 @@ void BaseTitleBar::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.fillPath(pathBack, QBrush(QColor(m_colorR, m_colorG, m_colorB)));
 
-    // 当窗口最大化或者还原后，窗口长度变了，标题栏的长度应当一起改变;
+    // 当窗口最大化或者还原后，窗口宽度变了，标题栏的宽度应当一起改变;
     if (this->width() != this->parentWidget()->width() - 1 - m_x)
     {
         this->setFixedWidth(this->parentWidget()->width() - 1 - m_x);

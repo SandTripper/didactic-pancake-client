@@ -14,13 +14,13 @@ class TcpConnect : public QObject
 
 public:
     //心跳包发送间隔
-    static const int HBT_INTERVAL = 6;
+    static const int HBT_INTERVAL = 20;
 
     //重连间隔
     static const int RECONNECT_INTERVAL = 6;
 
     //最长回复间隔
-    static const int LONGEST_REPLY_INTERVAL = 5;
+    static const int LONGEST_REPLY_INTERVAL = 10;
 
     //最大的数据包类型数
     static const int MAX_CATEGORY = 128;
@@ -37,8 +37,12 @@ public:
      LGT表示登出请求；
      SCU表示查找用户请求；
      ADF表示添加好友请求；
+     DEF表示删除好友；
      RFR表示回复好友请求；
      RCN表示重连请求；
+     GFI表示获取好友列表请求；
+     AFI表示增加好友；
+     DFI表示去除好友；
      */
     enum REQUEST
     {
@@ -48,8 +52,12 @@ public:
         LGT,
         SCU,
         ADF,
+        DEF,
         RFR,
         RCN,
+        GFI,
+        AFI,
+        DFI,
     };
 
     //主状态机的两种可能状态，分别表示：当前正在分析请求行，当前正在分析内容
@@ -88,8 +96,8 @@ public:
 
     QString m_sessionID;
 
-    //连接是否可用
-    int m_enable;
+    //连接是否可用且登录
+    bool m_enable;
 
 public:
     //返回全局唯一实例
@@ -142,8 +150,13 @@ signals:
     void RGTpackAdd();
     void SCUpackAdd();
     void ADFpackAdd();
+    void DEFpackAdd();
     void RFRpackAdd();
     void RCNpackAdd();
+    void GFIpackAdd();
+    void AFIpackAdd();
+    void DFIpackAdd();
+
     //断线
     void disconnected();
     //重连成功

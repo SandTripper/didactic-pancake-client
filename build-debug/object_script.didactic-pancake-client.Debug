@@ -1,6 +1,9 @@
 debug/AddFriendWindow.o
 debug/BaseTitleBar.o
 debug/BaseWindow.o
+debug/FriendBar.o
+debug/FriendInformation.o
+debug/FriendItem.o
 debug/FriendRequestsWindow.o
 debug/FriendRequsetsItem.o
 debug/LabelPlus.o
@@ -17,6 +20,9 @@ debug/moc_AddFriendWindow.o
 debug/moc_BaseTitleBar.o
 debug/moc_BaseWindow.o
 debug/moc_CustomMainWindow.o
+debug/moc_FriendBar.o
+debug/moc_FriendInformation.o
+debug/moc_FriendItem.o
 debug/moc_FriendRequestsWindow.o
 debug/moc_FriendRequsetsItem.o
 debug/moc_LabelPlus.o
