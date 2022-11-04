@@ -25,6 +25,14 @@ public:
     //是否是最大化窗口
     bool m_isMaxWindow;
 
+public slots:
+    //处理新增已读消息
+    void handleReadMessageNum(int num);
+
+    void on_btn_change_to_chat_clicked();
+
+    void on_btn_change_to_friend_clicked();
+
 signals:
     //切换到聊天界面
     void changeToChat();
@@ -36,11 +44,6 @@ protected:
     int m_colorR;
     int m_colorG;
     int m_colorB;
-
-private slots:
-    void on_btn_change_to_chat_clicked();
-
-    void on_btn_change_to_friend_clicked();
 
 private:
     //初始化本窗口
@@ -62,6 +65,9 @@ private:
     QPoint m_startMovePos;
 
     Ui::SideBar *ui;
+
+    //未读消息数目
+    int m_unreadNum;
 };
 
 #endif // SIDEBAR_H

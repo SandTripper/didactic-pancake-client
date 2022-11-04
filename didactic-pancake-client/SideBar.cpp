@@ -1,5 +1,6 @@
 #include "SideBar.h"
 #include "ui_SideBar.h"
+#include "SQLConnect.h"
 
 #include <QPainter>
 #include <QMouseEvent>
@@ -7,7 +8,8 @@
 SideBar::SideBar(QWidget *parent) : QWidget(parent),
                                     m_isMaxWindow(false),
                                     m_colorR(0), m_colorG(0), m_colorB(0),
-                                    ui(new Ui::SideBar)
+                                    ui(new Ui::SideBar),
+                                    m_unreadNum(SQLConnect::getInstance()->getAllunReadNum())
 {
     ui->setupUi(this);
 
@@ -20,19 +22,15 @@ SideBar::~SideBar()
     delete ui;
 }
 
-void SideBar::setBackgroundColor(int r, int g, int b)
-{
-    m_colorR = r;
-    m_colorG = g;
-    m_colorB = b;
-    // 重新绘制（调用paintEvent事件）;
-    update();
-}
-
 void SideBar::initThis()
 {
     //设置窗口无边框
     setWindowFlags(Qt::FramelessWindowHint);
+
+    //默认选中聊天界面
+    on_btn_change_to_chat_clicked();
+
+    ui->lbl_redpoint->setNum(m_unreadNum);
 }
 
 void SideBar::initControl()
@@ -62,8 +60,17 @@ void SideBar::initControl()
     ui->lbl_user_avatar->setScaledContents(true);
     ui->lbl_user_avatar->setCursor(QCursor(Qt::PointingHandCursor));
 
-    //默认选中聊天界面
-    on_btn_change_to_chat_clicked();
+    //设置消息红点大于99时显示99
+    ui->lbl_redpoint->setPointType(RedPoint::SHOW99WHENBIGGER);
+}
+
+void SideBar::setBackgroundColor(int r, int g, int b)
+{
+    m_colorR = r;
+    m_colorG = g;
+    m_colorB = b;
+    // 重新绘制（调用paintEvent事件）;
+    update();
 }
 
 void SideBar::paintEvent(QPaintEvent *event)
@@ -82,6 +89,12 @@ void SideBar::paintEvent(QPaintEvent *event)
         this->setFixedHeight(this->parentWidget()->height() - 2);
     }
     QWidget::paintEvent(event);
+}
+
+void SideBar::handleReadMessageNum(int num)
+{
+    m_unreadNum -= num;
+    ui->lbl_redpoint->setNum(m_unreadNum);
 }
 
 // 以下通过mousePressEvent、mouseMoveEvent、mouseReleaseEvent三个事件实现了鼠标拖动侧边栏栏移动窗口的效果;

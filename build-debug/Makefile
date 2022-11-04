@@ -250,9 +250,11 @@ Makefile: ../didactic-pancake-client/didactic-pancake-client.pro D:/QT/5.13.2/mi
 		D:/QT/5.13.2/mingw73_64/mkspecs/features/yacc.prf \
 		D:/QT/5.13.2/mingw73_64/mkspecs/features/lex.prf \
 		../didactic-pancake-client/didactic-pancake-client.pro \
+		D:/QT/5.13.2/mingw73_64/lib/Qt5Multimedia.prl \
 		D:/QT/5.13.2/mingw73_64/lib/Qt5Widgets.prl \
 		D:/QT/5.13.2/mingw73_64/lib/Qt5Gui.prl \
 		D:/QT/5.13.2/mingw73_64/lib/Qt5Network.prl \
+		D:/QT/5.13.2/mingw73_64/lib/Qt5Sql.prl \
 		D:/QT/5.13.2/mingw73_64/lib/Qt5Core.prl \
 		D:/QT/5.13.2/mingw73_64/lib/qtmain.prl
 	$(QMAKE) -o Makefile ..\didactic-pancake-client\didactic-pancake-client.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
@@ -443,9 +445,11 @@ D:/QT/5.13.2/mingw73_64/mkspecs/features/exceptions.prf:
 D:/QT/5.13.2/mingw73_64/mkspecs/features/yacc.prf:
 D:/QT/5.13.2/mingw73_64/mkspecs/features/lex.prf:
 ../didactic-pancake-client/didactic-pancake-client.pro:
+D:/QT/5.13.2/mingw73_64/lib/Qt5Multimedia.prl:
 D:/QT/5.13.2/mingw73_64/lib/Qt5Widgets.prl:
 D:/QT/5.13.2/mingw73_64/lib/Qt5Gui.prl:
 D:/QT/5.13.2/mingw73_64/lib/Qt5Network.prl:
+D:/QT/5.13.2/mingw73_64/lib/Qt5Sql.prl:
 D:/QT/5.13.2/mingw73_64/lib/Qt5Core.prl:
 D:/QT/5.13.2/mingw73_64/lib/qtmain.prl:
 qmake: FORCE

@@ -1,0 +1,9 @@
+.vscode/
+
+.VSCodeCounter/
+
+build-debug/
+
+build-release/
+
+--SQLite.sql

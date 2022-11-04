@@ -28,8 +28,12 @@ public:
     FriendListWidget *getListWidget();
 
 signals:
+    //添加好友的信号
+    void addFriend(QString username);
     //删除好友的信号
     void deleteFriend(QString username);
+    //切换到聊天信号
+    void changeToUserChat(const QString username);
 
 protected:
     // 好友栏背景色;

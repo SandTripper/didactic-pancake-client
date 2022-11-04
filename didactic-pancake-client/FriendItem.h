@@ -8,8 +8,6 @@
 #include "SuspendedScrollbar.h"
 #include "TcpConnect.h"
 
-class SortedListWidgetItem;
-
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -25,8 +23,16 @@ public:
 
     ~FriendItem();
 
+public:
     QString m_username;
+
+signals:
+    //切换到用户聊天信号
+    void changeToUserChat(const QString &username);
+
 private slots:
+    void changeToSendMessage();
+
     void deleteFriend();
 
 private:
@@ -70,6 +76,8 @@ public:
 
 signals:
     void chooseFriend(QString username);
+
+    void changeToUserChat(const QString &username);
 
 private slots:
     void handleItemClicked(QListWidgetItem *item);

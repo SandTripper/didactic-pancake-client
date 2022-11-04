@@ -1,6 +1,9 @@
 release/AddFriendWindow.o
+release/AutoWrapLabel.o
 release/BaseTitleBar.o
 release/BaseWindow.o
+release/ChatBar.o
+release/ChatItem.o
 release/FriendBar.o
 release/FriendInformation.o
 release/FriendItem.o
@@ -8,8 +11,14 @@ release/FriendRequestsWindow.o
 release/FriendRequsetsItem.o
 release/LabelPlus.o
 release/LoginWindow.o
+release/MessageBar.o
+release/MessageItem.o
+release/MessageWidget.o
+release/RedPoint.o
 release/RegisterWindow.o
+release/SQLConnect.o
 release/SideBar.o
+release/SoundPlayer.o
 release/StatusBar.o
 release/SuspendedScrollbar.o
 release/TcpConnect.o
@@ -17,8 +26,11 @@ release/main.o
 release/CustomMainWindow.o
 release/qrc_Resource.o
 release/moc_AddFriendWindow.o
+release/moc_AutoWrapLabel.o
 release/moc_BaseTitleBar.o
 release/moc_BaseWindow.o
+release/moc_ChatBar.o
+release/moc_ChatItem.o
 release/moc_CustomMainWindow.o
 release/moc_FriendBar.o
 release/moc_FriendInformation.o
@@ -27,6 +39,10 @@ release/moc_FriendRequestsWindow.o
 release/moc_FriendRequsetsItem.o
 release/moc_LabelPlus.o
 release/moc_LoginWindow.o
+release/moc_MessageBar.o
+release/moc_MessageItem.o
+release/moc_MessageWidget.o
+release/moc_RedPoint.o
 release/moc_RegisterWindow.o
 release/moc_SideBar.o
 release/moc_StatusBar.o

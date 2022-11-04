@@ -14,6 +14,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
 #include "LabelPlus.h"
+#include "RedPoint.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -23,6 +24,7 @@ public:
     QPushButton *btn_change_to_chat;
     QPushButton *btn_change_to_friend;
     LabelPlus *lbl_user_avatar;
+    RedPoint *lbl_redpoint;
 
     void setupUi(QWidget *SideBar)
     {
@@ -40,6 +42,9 @@ public:
         lbl_user_avatar->setObjectName(QString::fromUtf8("lbl_user_avatar"));
         lbl_user_avatar->setEnabled(true);
         lbl_user_avatar->setGeometry(QRect(10, 37, 36, 36));
+        lbl_redpoint = new RedPoint(SideBar);
+        lbl_redpoint->setObjectName(QString::fromUtf8("lbl_redpoint"));
+        lbl_redpoint->setGeometry(QRect(32, 96, 16, 16));
 
         retranslateUi(SideBar);
 
@@ -52,6 +57,7 @@ public:
         btn_change_to_chat->setText(QString());
         btn_change_to_friend->setText(QString());
         lbl_user_avatar->setText(QString());
+        lbl_redpoint->setText(QString());
     } // retranslateUi
 
 };

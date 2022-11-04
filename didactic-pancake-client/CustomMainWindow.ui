@@ -13,6 +13,25 @@
   <property name="windowTitle">
    <string>CustomMainWindow</string>
   </property>
+  <widget class="QLabel" name="lbl_chatUsername">
+   <property name="geometry">
+    <rect>
+     <x>329</x>
+     <y>24</y>
+     <width>281</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Microsoft YaHei</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

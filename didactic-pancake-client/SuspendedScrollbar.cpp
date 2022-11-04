@@ -32,6 +32,8 @@ void SuspendedScrollBar::slt_valueChange_scrollBar(int value)
     this->setValue(value);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 SuspendedScrollBar_ListWidget::SuspendedScrollBar_ListWidget(QWidget *parent)
     : QListWidget(parent)
 {
@@ -48,6 +50,12 @@ SuspendedScrollBar_ListWidget::SuspendedScrollBar_ListWidget(QWidget *parent)
 void SuspendedScrollBar_ListWidget::slt_valueChange_widget(int value)
 {
     this->verticalScrollBar()->setValue(value);
+}
+
+void SuspendedScrollBar_ListWidget::showScrollBar()
+{
+    if (m_pVertScrollBar->maximum() > 0)
+        m_pVertScrollBar->show();
 }
 
 void SuspendedScrollBar_ListWidget::resizeEvent(QResizeEvent *e)
@@ -104,4 +112,39 @@ void SuspendedScrollBar_Area::leaveEvent(QEvent *e)
 {
     m_pVertScrollBar->hide();
     return QWidget::leaveEvent(e);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SuspendedScrollBar_TextEdit::SuspendedScrollBar_TextEdit(QWidget *parent)
+    : QTextEdit(parent)
+{
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    m_pVertScrollBar = new SuspendedScrollBar(Qt::Vertical, this);
+    connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)), m_pVertScrollBar, SLOT(slt_valueChange_scrollBar(int)));
+    connect(m_pVertScrollBar, SIGNAL(valueChanged(int)), this, SLOT(slt_valueChange_widget(int)));
+    connect(this->verticalScrollBar(), SIGNAL(rangeChanged(int, int)), m_pVertScrollBar, SLOT(slt_rangeChanged(int, int)));
+}
+
+void SuspendedScrollBar_TextEdit::slt_valueChange_widget(int value)
+{
+    this->verticalScrollBar()->setValue(value);
+}
+
+void SuspendedScrollBar_TextEdit::resizeEvent(QResizeEvent *e)
+{
+    int iX = this->width() - 8;
+    m_pVertScrollBar->setGeometry(iX, 1, 8, this->height() - 2);
+    return QTextEdit::resizeEvent(e);
+}
+
+void SuspendedScrollBar_TextEdit::paintEvent(QPaintEvent *e)
+{
+    if (document()->lineCount() > 1)
+    {
+        m_pVertScrollBar->show();
+    }
+    QTextEdit::paintEvent(e);
 }

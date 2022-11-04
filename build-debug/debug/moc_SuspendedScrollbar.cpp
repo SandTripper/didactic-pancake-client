@@ -309,5 +309,99 @@ int SuspendedScrollBar_Area::qt_metacall(QMetaObject::Call _c, int _id, void **_
     }
     return _id;
 }
+struct qt_meta_stringdata_SuspendedScrollBar_TextEdit_t {
+    QByteArrayData data[3];
+    char stringdata0[52];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    qptrdiff(offsetof(qt_meta_stringdata_SuspendedScrollBar_TextEdit_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
+    )
+static const qt_meta_stringdata_SuspendedScrollBar_TextEdit_t qt_meta_stringdata_SuspendedScrollBar_TextEdit = {
+    {
+QT_MOC_LITERAL(0, 0, 27), // "SuspendedScrollBar_TextEdit"
+QT_MOC_LITERAL(1, 28, 22), // "slt_valueChange_widget"
+QT_MOC_LITERAL(2, 51, 0) // ""
+
+    },
+    "SuspendedScrollBar_TextEdit\0"
+    "slt_valueChange_widget\0"
+};
+#undef QT_MOC_LITERAL
+
+static const uint qt_meta_data_SuspendedScrollBar_TextEdit[] = {
+
+ // content:
+       8,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       1,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+ // slots: name, argc, parameters, tag, flags
+       1,    1,   19,    2, 0x0a /* Public */,
+
+ // slots: parameters
+    QMetaType::Void, QMetaType::Int,    2,
+
+       0        // eod
+};
+
+void SuspendedScrollBar_TextEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        auto *_t = static_cast<SuspendedScrollBar_TextEdit *>(_o);
+        Q_UNUSED(_t)
+        switch (_id) {
+        case 0: _t->slt_valueChange_widget((*reinterpret_cast< int(*)>(_a[1]))); break;
+        default: ;
+        }
+    }
+}
+
+QT_INIT_METAOBJECT const QMetaObject SuspendedScrollBar_TextEdit::staticMetaObject = { {
+    &QTextEdit::staticMetaObject,
+    qt_meta_stringdata_SuspendedScrollBar_TextEdit.data,
+    qt_meta_data_SuspendedScrollBar_TextEdit,
+    qt_static_metacall,
+    nullptr,
+    nullptr
+} };
+
+
+const QMetaObject *SuspendedScrollBar_TextEdit::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *SuspendedScrollBar_TextEdit::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_meta_stringdata_SuspendedScrollBar_TextEdit.stringdata0))
+        return static_cast<void*>(this);
+    return QTextEdit::qt_metacast(_clname);
+}
+
+int SuspendedScrollBar_TextEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QTextEdit::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 1)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 1;
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 1)
+            *reinterpret_cast<int*>(_a[0]) = -1;
+        _id -= 1;
+    }
+    return _id;
+}
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

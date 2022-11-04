@@ -25,10 +25,10 @@ public:
     {
         if (FriendBar->objectName().isEmpty())
             FriendBar->setObjectName(QString::fromUtf8("FriendBar"));
-        FriendBar->resize(249, 438);
+        FriendBar->resize(249, 439);
         listWidget = new FriendListWidget(FriendBar);
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
-        listWidget->setGeometry(QRect(0, 0, 249, 438));
+        listWidget->setGeometry(QRect(0, 1, 249, 438));
 
         retranslateUi(FriendBar);
 

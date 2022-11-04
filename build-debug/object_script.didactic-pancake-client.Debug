@@ -1,6 +1,9 @@
 debug/AddFriendWindow.o
+debug/AutoWrapLabel.o
 debug/BaseTitleBar.o
 debug/BaseWindow.o
+debug/ChatBar.o
+debug/ChatItem.o
 debug/FriendBar.o
 debug/FriendInformation.o
 debug/FriendItem.o
@@ -8,8 +11,14 @@ debug/FriendRequestsWindow.o
 debug/FriendRequsetsItem.o
 debug/LabelPlus.o
 debug/LoginWindow.o
+debug/MessageBar.o
+debug/MessageItem.o
+debug/MessageWidget.o
+debug/RedPoint.o
 debug/RegisterWindow.o
+debug/SQLConnect.o
 debug/SideBar.o
+debug/SoundPlayer.o
 debug/StatusBar.o
 debug/SuspendedScrollbar.o
 debug/TcpConnect.o
@@ -17,8 +26,11 @@ debug/main.o
 debug/CustomMainWindow.o
 debug/qrc_Resource.o
 debug/moc_AddFriendWindow.o
+debug/moc_AutoWrapLabel.o
 debug/moc_BaseTitleBar.o
 debug/moc_BaseWindow.o
+debug/moc_ChatBar.o
+debug/moc_ChatItem.o
 debug/moc_CustomMainWindow.o
 debug/moc_FriendBar.o
 debug/moc_FriendInformation.o
@@ -27,6 +39,10 @@ debug/moc_FriendRequestsWindow.o
 debug/moc_FriendRequsetsItem.o
 debug/moc_LabelPlus.o
 debug/moc_LoginWindow.o
+debug/moc_MessageBar.o
+debug/moc_MessageItem.o
+debug/moc_MessageWidget.o
+debug/moc_RedPoint.o
 debug/moc_RegisterWindow.o
 debug/moc_SideBar.o
 debug/moc_StatusBar.o

@@ -3,6 +3,9 @@
 #include "CustomMainWindow.h"
 #include "ui_CustomMainWindow.h"
 #include "LoginWindow.h"
+#include "SQLConnect.h"
+
+#include <QSoundEffect>
 
 CustomMainWindow::CustomMainWindow(QString sessionID, QString username, QWidget *parent) : BaseWindow(parent),
                                                                                            ui(new Ui::CustomMainWindow),
@@ -11,18 +14,32 @@ CustomMainWindow::CustomMainWindow(QString sessionID, QString username, QWidget 
                                                                                            m_sideBar(new SideBar(this)),
                                                                                            m_statusBar(new StatusBar(this)),
                                                                                            m_friendBar(new FriendBar(this)),
-                                                                                           m_friendInformation(new FriendInformation(this))
+                                                                                           m_friendInformation(new FriendInformation(this)),
+                                                                                           m_chatBar(new ChatBar(this)),
+                                                                                           m_messageBar(new MessageBar(this))
 {
     ui->setupUi(this);
+
+    // this->hide();
 
     setWindowTitle(username); //将窗口名字设为登录的用户名
 
     initThis();
+    initControl();
     initTitleBar();
     initSideBar();
     initStatusBar();
     initFriendBar();
     initFriendInformationBar();
+    initChatBar();
+    initMessageBar();
+
+    TcpConnect::getInstance()->write_data(DataPacket(TcpConnect::RDY, 0, ""));
+    //    QTimer::singleShot(5000, this, [=]()
+    //    {
+    //        TcpConnect::getInstance()->write_data(DataPacket(TcpConnect::RDY,0,""));
+    //        this->show();
+    //    });
 }
 
 CustomMainWindow::~CustomMainWindow()
@@ -54,8 +71,16 @@ void CustomMainWindow::initTitleBar()
     m_titleBar->move(m_titleBar->m_x, 1);
 }
 
+void CustomMainWindow::initControl()
+{
+    connect(m_messageBar, &MessageBar::setChatUserName, this, [=](const QString &username)
+            { ui->lbl_chatUsername->setText(username); });
+}
+
 void CustomMainWindow::initSideBar()
 {
+    connect(m_chatBar, &ChatBar::readMessageNum, m_sideBar, &SideBar::handleReadMessageNum);
+
     m_sideBar->setBackgroundColor(46, 46, 46);
     m_sideBar->move(1, 1);
 }
@@ -75,7 +100,7 @@ void CustomMainWindow::initFriendBar()
 
     m_friendBar->setVisible(false);
     m_friendBar->setBackgroundColor(230, 229, 229);
-    m_friendBar->move(55, 63);
+    m_friendBar->move(55, 62);
 
     m_connect->write_data(DataPacket(TcpConnect::GFI, 3, "1\r\n"));
 }
@@ -92,6 +117,51 @@ void CustomMainWindow::initFriendInformationBar()
     m_friendInformation->setVisible(false);
     m_friendInformation->setBackgroundColor(245, 245, 245);
     m_friendInformation->move(305, 62);
+}
+
+void CustomMainWindow::initChatBar()
+{
+    connect(m_sideBar, &SideBar::changeToChat, this, [=]()
+            { m_chatBar->setVisible(true); });
+    connect(m_sideBar, &SideBar::changeToFriend, this, [=]()
+            { m_chatBar->setVisible(false); });
+
+    connect(m_messageBar, &MessageBar::messageAdd, m_chatBar, &ChatBar::handleMessageAdd);
+    connect(m_friendBar, &FriendBar::addFriend, m_chatBar, &ChatBar::handleAddFriend);
+    connect(m_friendBar, &FriendBar::deleteFriend, m_chatBar, &ChatBar::handleDeleteFriend);
+    connect(m_friendInformation, &FriendInformation::changeToUserChat, [=](QString username)
+            {
+        m_sideBar->on_btn_change_to_chat_clicked();
+        m_chatBar->selectUser(username); });
+
+    connect(m_friendBar, &FriendBar::changeToUserChat, [=](QString username)
+            {
+        m_sideBar->on_btn_change_to_chat_clicked();
+        m_chatBar->selectUser(username); });
+
+    m_chatBar->setVisible(true);
+    m_chatBar->setBackgroundColor(230, 229, 229);
+    m_chatBar->move(55, 62);
+}
+
+void CustomMainWindow::initMessageBar()
+{
+    connect(m_sideBar, &SideBar::changeToChat, this, [=]()
+            {
+        m_messageBar->show();
+        ui->lbl_chatUsername->show(); });
+    connect(m_sideBar, &SideBar::changeToFriend, this, [=]()
+            {
+        m_messageBar->hide();
+        ui->lbl_chatUsername->hide(); });
+    connect(m_chatBar, &ChatBar::selectUser, m_messageBar, &MessageBar::changeToUserWidget);
+    connect(m_friendBar, &FriendBar::deleteFriend, m_messageBar, &MessageBar::deleteUserWidget);
+    connect(m_chatBar, &ChatBar::hideUserChat, m_messageBar, &MessageBar::hideUserWidget);
+    connect(m_chatBar, &ChatBar::deleteUserChat, m_messageBar, &MessageBar::deleteUserWidget);
+
+    m_messageBar->setVisible(true);
+    m_messageBar->setBackgroundColor(245, 245, 245);
+    m_messageBar->move(305, 62);
 }
 
 void CustomMainWindow::onButtonRestoreClicked()

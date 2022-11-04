@@ -1,5 +1,7 @@
 QT       += core gui
 QT += network
+QT += multimedia
+QT += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,8 +20,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     AddFriendWindow.cpp \
+    AutoWrapLabel.cpp \
     BaseTitleBar.cpp \
     BaseWindow.cpp \
+    ChatBar.cpp \
+    ChatItem.cpp \
     FriendBar.cpp \
     FriendInformation.cpp \
     FriendItem.cpp \
@@ -27,8 +32,14 @@ SOURCES += \
     FriendRequsetsItem.cpp \
     LabelPlus.cpp \
     LoginWindow.cpp \
+    MessageBar.cpp \
+    MessageItem.cpp \
+    MessageWidget.cpp \
+    RedPoint.cpp \
     RegisterWindow.cpp \
+    SQLConnect.cpp \
     SideBar.cpp \
+    SoundPlayer.cpp \
     StatusBar.cpp \
     SuspendedScrollbar.cpp \
     TcpConnect.cpp \
@@ -37,8 +48,11 @@ SOURCES += \
 
 HEADERS += \
     AddFriendWindow.h \
+    AutoWrapLabel.h \
     BaseTitleBar.h \
     BaseWindow.h \
+    ChatBar.h \
+    ChatItem.h \
     CustomMainWindow.h \
     FriendBar.h \
     FriendInformation.h \
@@ -47,14 +61,22 @@ HEADERS += \
     FriendRequsetsItem.h \
     LabelPlus.h \
     LoginWindow.h \
+    MessageBar.h \
+    MessageItem.h \
+    MessageWidget.h \
+    RedPoint.h \
     RegisterWindow.h \
+    SQLConnect.h \
     SideBar.h \
+    SoundPlayer.h \
     StatusBar.h \
     SuspendedScrollbar.h \
     TcpConnect.h
 
 FORMS += \
     AddFriendWindow.ui \
+    ChatBar.ui \
+    ChatItem.ui \
     CustomMainWindow.ui \
     FriendBar.ui \
     FriendInformation.ui \
@@ -62,6 +84,8 @@ FORMS += \
     FriendRequestsWindow.ui \
     FriendRequsetsItem.ui \
     LoginWindow.ui \
+    MessageBar.ui \
+    MessageWidget.ui \
     RegisterWindow.ui \
     SideBar.ui \
     StatusBar.ui

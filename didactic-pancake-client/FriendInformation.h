@@ -34,11 +34,18 @@ public slots:
     //处理删除好友的逻辑
     void deleteFriend(QString username);
 
+signals:
+    //切换到用户聊天信号
+    void changeToUserChat(QString username);
+
 protected:
     // 好友信息栏背景色;
     int m_colorR;
     int m_colorG;
     int m_colorB;
+
+private slots:
+    void on_btn_send_message_clicked();
 
 private:
     //初始化本窗口

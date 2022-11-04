@@ -7,7 +7,6 @@
 #include <string>
 #include <QObject>
 #include <iostream>
-#include <QDebug>
 
 using namespace std;
 
@@ -20,8 +19,7 @@ TcpConnect *TcpConnect::getInstance()
 TcpConnect::TcpConnect() : m_sessionID(""),
                            m_enable(false),
                            m_client(new QTcpSocket),
-                           m_heartBeatNum(1),
-                           m_heartBeatNumRecv(1)
+                           m_latestTime(0)
 {
     for (int i = 0; i < MAX_CATEGORY; i++)
     {
@@ -32,7 +30,6 @@ TcpConnect::TcpConnect() : m_sessionID(""),
 
     connect(m_client, &QTcpSocket::readyRead, this, &TcpConnect::read_handler);
     connect(m_client, &QTcpSocket::connected, this, &TcpConnect::reconnected);
-    connect(this, &TcpConnect::HBTpackAdd, this, &TcpConnect::HBTpackHandler);
     connect(this, &TcpConnect::disconnected, this, [=]()
             {m_enable = false;reconnect(); });
     connect(this, &TcpConnect::reconnected, this, &TcpConnect::relogin);
@@ -43,6 +40,8 @@ TcpConnect::TcpConnect() : m_sessionID(""),
     reconnect();
 
     checkConnect();
+
+    m_content = nullptr;
 }
 
 TcpConnect::~TcpConnect()
@@ -51,47 +50,16 @@ TcpConnect::~TcpConnect()
     delete m_client;
 }
 
-const char *TcpConnect::ReqToString(TcpConnect::REQUEST r)
-{
-    switch (r)
-    {
-    case HBT:
-        return "HBT";
-    case LGN:
-        return "LGN";
-    case RGT:
-        return "RGT";
-    case LGT:
-        return "LGT";
-    case SCU:
-        return "SCU";
-    case ADF:
-        return "ADF";
-    case DEF:
-        return "DEF";
-    case RFR:
-        return "RFR";
-    case RCN:
-        return "RCN";
-    case GFI:
-        return "GFI";
-    case AFI:
-        return "AFI";
-    case DFI:
-        return "DFI";
-    default:
-        return "ERR";
-    }
-}
-
 void TcpConnect::initRead()
 {
+    m_check_state = CHECK_STATE_TYPELINE;
     m_method = HBT;
     m_start_line = 0;
     m_checked_idx = 0;
-
-    m_check_state = CHECK_STATE_REQUESTLINE;
+    m_content_length = 0;
     m_read_idx = 0;
+    m_content_len_have_read = 0;
+    m_content = nullptr;
     memset(m_read_buf, '\0', READ_BUFFER_SIZE);
 }
 
@@ -100,133 +68,143 @@ void TcpConnect::initWrite()
     m_bytes_have_send = 0;
     m_bytes_to_send = 0;
     m_write_idx = 0;
-    m_content_length = 0;
     memset(m_write_buf, '\0', WRITE_BUFFER_SIZE);
 }
 
 void TcpConnect::read_handler()
 {
-    if (read())
+    m_latestTime = QDateTime::currentDateTime().toTime_t();
+    while (read())
     {
-        RESULT_CODE read_ret = process_read();
-        if (read_ret == NO_REQUEST)
+        RESULT_CODE read_ret = GET_REQUEST;
+        while (m_checked_idx < m_read_idx)
         {
-            return;
-        }
-        vec[m_method].emplace_back(DataPacket(m_method, m_content_length, m_string));
+            read_ret = process_read();
+            if (read_ret == NO_REQUEST)
+            {
+                //最后一个数据包不完整，保留残缺的数据行，删除已读过的读缓冲区字符
+                int broken_line_len = m_read_idx - m_start_line;
+                for (int p1 = 0, p2 = m_start_line; p1 < broken_line_len; ++p1, ++p2)
+                {
+                    m_read_buf[p1] = p2;
+                }
+                memset(m_read_buf + broken_line_len, '\0', READ_BUFFER_SIZE - broken_line_len);
+                m_read_idx -= m_start_line;
+                m_checked_idx = m_read_idx;
+                m_start_line = 0;
+                break;
+            }
 
-        //发出数据包增加信号
-        switch (m_method)
+            m_check_state = CHECK_STATE_TYPELINE;
+            m_start_line = m_checked_idx;
+            m_content_len_have_read = 0;
+            vec[m_method].emplace_back(DataPacket(m_method, m_content_length, m_content));
+            if (m_content != nullptr)
+            {
+                delete[] m_content;
+                m_content = nullptr;
+            }
+
+            //发出数据包增加信号
+            switch (m_method)
+            {
+            case HBT:
+                break;
+            case LGN:
+                emit LGNpackAdd();
+                break;
+            case RGT:
+                emit RGTpackAdd();
+                break;
+            case SCU:
+                emit SCUpackAdd();
+                break;
+            case ADF:
+                emit ADFpackAdd();
+                break;
+            case DEF:
+                emit DEFpackAdd();
+                break;
+            case RFR:
+                emit RFRpackAdd();
+                break;
+            case RCN:
+                emit RCNpackAdd();
+                break;
+            case GFI:
+                emit GFIpackAdd();
+                break;
+            case AFI:
+                emit AFIpackAdd();
+                break;
+            case DFI:
+                emit DFIpackAdd();
+                break;
+            case SMA:
+                emit SMApackAdd();
+                break;
+            case RMA:
+                emit RMApackAdd();
+                break;
+            case RDY:
+                break;
+            default:
+                break;
+            }
+        }
+        if (read_ret != NO_REQUEST)
         {
-        case HBT:
-            emit HBTpackAdd();
+            initRead();
+        }
+    }
+}
+
+TcpConnect::RESULT_CODE TcpConnect::process_read()
+{
+    LINE_STATUS linestatus = LINE_OK; //记录当前行的读取状态
+    RESULT_CODE retcode = NO_REQUEST; //记录请求的处理结果
+    char *text = 0;
+
+    //主状态机，用于从buffer中取出所有完整的行
+    while (((m_check_state == CHECK_STATE_CONTENT) && (linestatus == LINE_OK)) ||
+           ((linestatus = parse_line()) == LINE_OK))
+    {
+        text = get_line();            // start_line是行在buffer中 的起始位置
+        m_start_line = m_checked_idx; //记录下一行的起始位置
+
+        switch (m_check_state)
+        {
+        case CHECK_STATE_TYPELINE: //第一个状态，分析数据包类型行
+            retcode = parse_type_line(text);
+            if (retcode == BAD_REQUEST)
+            {
+                return BAD_REQUEST;
+            }
             break;
-        case LGN:
-            emit LGNpackAdd();
+        case CHECK_STATE_HEADER: //第二个状态，分析头部字段
+            retcode = parse_headers(text);
+            if (retcode == BAD_REQUEST)
+            {
+                return BAD_REQUEST;
+            }
+            else if (retcode == GET_REQUEST)
+            {
+                return GET_REQUEST;
+            }
             break;
-        case RGT:
-            emit RGTpackAdd();
-            break;
-        case SCU:
-            emit SCUpackAdd();
-            break;
-        case ADF:
-            emit ADFpackAdd();
-            break;
-        case DEF:
-            emit DEFpackAdd();
-            break;
-        case RFR:
-            emit RFRpackAdd();
-            break;
-        case RCN:
-            emit RCNpackAdd();
-            break;
-        case GFI:
-            emit GFIpackAdd();
-            break;
-        case AFI:
-            emit AFIpackAdd();
-            break;
-        case DFI:
-            emit DFIpackAdd();
+        case CHECK_STATE_CONTENT: //第三个状态，分析数据包正文
+            retcode = parse_content(text);
+            if (retcode == GET_REQUEST)
+            {
+                return GET_REQUEST;
+            }
+            linestatus = LINE_OPEN;
             break;
         default:
-            break;
+            return INTERNAL_ERROR;
         }
-
-        initRead();
     }
-}
-
-void TcpConnect::HBTpackHandler()
-{
-    for (const auto data : vec[TcpConnect::HBT])
-    {
-        if (data.content_len == 0)
-            continue;
-        m_heartBeatNumRecv = max(m_heartBeatNumRecv, stoi(string(data.content, data.content + data.content_len - 2)));
-    }
-    vec[TcpConnect::HBT].clear();
-}
-
-void TcpConnect::reconnect()
-{
-
-    if (m_enable)
-    {
-        return;
-    }
-
-    m_client->close();
-
-    m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
-
-    QTimer::singleShot(RECONNECT_INTERVAL * 1000, this, [=]()
-                       { reconnect(); });
-}
-
-void TcpConnect::relogin()
-{
-    if (m_sessionID != "")
-    {
-        QString content = m_sessionID + "\r\n";
-        // QString转char
-        char *ctmp;
-        QByteArray ba = content.toLatin1();
-        ctmp = ba.data();
-        write_data(DataPacket(RCN, content.length(), ctmp));
-    }
-    m_enable = true;
-
-    checkConnect();
-}
-
-void TcpConnect::checkConnect()
-{
-    if (!m_enable)
-    {
-        return;
-    }
-
-    QString content = QString::number(++m_heartBeatNum);
-    content += "\r\n";
-
-    // QString转char
-    char *ctmp;
-    QByteArray ba = content.toLatin1();
-    ctmp = ba.data();
-    write_data(DataPacket(HBT, content.length(), ctmp));
-
-    QTimer::singleShot(LONGEST_REPLY_INTERVAL * 1000, this, [=]()
-                       {
-        if(m_heartBeatNumRecv<m_heartBeatNum)
-        {
-            emit disconnected();
-        } });
-
-    QTimer::singleShot(HBT_INTERVAL * 1000, this, [=]()
-                       { checkConnect(); });
+    return NO_REQUEST;
 }
 
 bool TcpConnect::read()
@@ -247,179 +225,6 @@ bool TcpConnect::read()
     {
         return true;
     }
-}
-
-TcpConnect::RESULT_CODE TcpConnect::process_read()
-{
-    LINE_STATUS linestatus = LINE_OK; //记录当前行的读取状态
-    RESULT_CODE retcode = NO_REQUEST; //记录处理结果
-    char *text = 0;
-
-    //主状态机，用于从buffer中取出所有完整的行
-    while (((m_check_state == CHECK_STATE_CONTENT) && (linestatus == LINE_OK)) ||
-           ((linestatus = parse_line()) == LINE_OK))
-    {
-        text = get_line();            // start_line是行在buffer中 的起始位置
-        m_start_line = m_checked_idx; //记录下一行的起始位置
-
-        switch (m_check_state)
-        {
-        case CHECK_STATE_REQUESTLINE: //第一个状态，分析消息类型行
-            retcode = parse_request_line(text);
-            if (retcode == BAD_REQUEST)
-            {
-                return BAD_REQUEST;
-            }
-            break;
-        case CHECK_STATE_HEADER: //第二个状态，分析头部字段
-            retcode = parse_headers(text);
-            if (retcode == BAD_REQUEST)
-            {
-                return BAD_REQUEST;
-            }
-            else if (retcode == GET_REQUEST)
-            {
-                return GET_REQUEST;
-            }
-            break;
-        case CHECK_STATE_CONTENT:
-            retcode = parse_content(text);
-            if (retcode == GET_REQUEST)
-            {
-                return GET_REQUEST;
-            }
-            linestatus = LINE_OPEN;
-            break;
-        default:
-            return INTERNAL_ERROR;
-        }
-    }
-    return NO_REQUEST;
-}
-
-bool TcpConnect::write_data(const DataPacket &data)
-{
-    add_status_line(ReqToString(data.category));
-    add_headers(data.content_len);
-    if (!add_content(data.content))
-    {
-        return false;
-    }
-    m_client->write(m_write_buf, m_write_idx);
-    initWrite();
-    return 0;
-}
-
-TcpConnect::RESULT_CODE TcpConnect::parse_request_line(char *text)
-{
-    char *method = text;
-    if (strcasecmp(method, "HBT") == 0)
-    {
-        m_method = HBT;
-    }
-    else if (strcasecmp(method, "LGN") == 0)
-    {
-        m_method = LGN;
-    }
-    else if (strcasecmp(method, "RGT") == 0)
-    {
-        m_method = RGT;
-    }
-    else if (strcasecmp(method, "LGT") == 0)
-    {
-        m_method = LGT;
-    }
-    else if (strcasecmp(method, "SCU") == 0)
-    {
-        m_method = SCU;
-    }
-    else if (strcasecmp(method, "ADF") == 0)
-    {
-        m_method = ADF;
-    }
-    else if (strcasecmp(method, "DEF") == 0)
-    {
-        m_method = DEF;
-    }
-    else if (strcasecmp(method, "RFR") == 0)
-    {
-        m_method = RFR;
-    }
-    else if (strcasecmp(method, "RCN") == 0)
-    {
-        m_method = RCN;
-    }
-    else if (strcasecmp(method, "GFI") == 0)
-    {
-        m_method = GFI;
-    }
-    else if (strcasecmp(method, "AFI") == 0)
-    {
-        m_method = AFI;
-    }
-    else if (strcasecmp(method, "DFI") == 0)
-    {
-        m_method = DFI;
-    }
-    else
-    {
-        return BAD_REQUEST;
-    }
-
-    //消息类型行处理完毕，状态转移到头部字段的分析
-    m_check_state = CHECK_STATE_HEADER;
-    return NO_REQUEST;
-}
-
-TcpConnect::RESULT_CODE TcpConnect::parse_headers(char *text)
-{
-    //遇到空行，表示头部字段解析完毕
-    if (text[0] == '\0')
-    {
-        /*如果数据有消息体，则还需要读取m_content_length字节的消息体，
-            状态机转移到CHECK_STATE_CONTENT状态*/
-        if (m_content_length != 0)
-        {
-            m_check_state = CHECK_STATE_CONTENT;
-            return NO_REQUEST;
-        }
-        //否则说明我们得到了一个完整的数据包
-        else
-        {
-            return GET_REQUEST;
-        }
-    }
-    //处理"Content-Length"头部字段
-    else if (strncasecmp(text, "Content-Length:", 15) == 0)
-    {
-        text += 15;
-        text += strspn(text, " \t");
-        m_content_length = atol(text);
-    }
-    else //其他头部字段都不处理
-    {
-    }
-
-    return NO_REQUEST;
-}
-
-TcpConnect::RESULT_CODE TcpConnect::parse_content(char *text)
-{
-    if (m_read_idx >= (m_content_length + m_checked_idx))
-    {
-        text[m_content_length] = '\0';
-        m_string = text;
-        return GET_REQUEST;
-    }
-    else
-    {
-        return NO_REQUEST;
-    }
-}
-
-char *TcpConnect::get_line()
-{
-    return m_read_buf + m_start_line;
 }
 
 TcpConnect::LINE_STATUS TcpConnect::parse_line()
@@ -471,6 +276,279 @@ TcpConnect::LINE_STATUS TcpConnect::parse_line()
     return LINE_OPEN;
 }
 
+char *TcpConnect::get_line()
+{
+    return m_read_buf + m_start_line;
+}
+
+TcpConnect::RESULT_CODE TcpConnect::parse_type_line(char *text)
+{
+    char *method = text;
+    if (strcasecmp(method, "HBT") == 0)
+    {
+        m_method = HBT;
+    }
+    else if (strcasecmp(method, "LGN") == 0)
+    {
+        m_method = LGN;
+    }
+    else if (strcasecmp(method, "RGT") == 0)
+    {
+        m_method = RGT;
+    }
+    else if (strcasecmp(method, "LGT") == 0)
+    {
+        m_method = LGT;
+    }
+    else if (strcasecmp(method, "SCU") == 0)
+    {
+        m_method = SCU;
+    }
+    else if (strcasecmp(method, "ADF") == 0)
+    {
+        m_method = ADF;
+    }
+    else if (strcasecmp(method, "DEF") == 0)
+    {
+        m_method = DEF;
+    }
+    else if (strcasecmp(method, "RFR") == 0)
+    {
+        m_method = RFR;
+    }
+    else if (strcasecmp(method, "RCN") == 0)
+    {
+        m_method = RCN;
+    }
+    else if (strcasecmp(method, "GFI") == 0)
+    {
+        m_method = GFI;
+    }
+    else if (strcasecmp(method, "AFI") == 0)
+    {
+        m_method = AFI;
+    }
+    else if (strcasecmp(method, "DFI") == 0)
+    {
+        m_method = DFI;
+    }
+    else if (strcasecmp(method, "SMA") == 0)
+    {
+        m_method = SMA;
+    }
+    else if (strcasecmp(method, "RMA") == 0)
+    {
+        m_method = RMA;
+    }
+    else if (strcasecmp(method, "RDY") == 0)
+    {
+        m_method = RDY;
+    }
+    else
+    {
+        return BAD_REQUEST;
+    }
+
+    //请求行处理完毕，状态转移到头部字段的分析
+    m_check_state = CHECK_STATE_HEADER;
+    return NO_REQUEST;
+}
+
+TcpConnect::RESULT_CODE TcpConnect::parse_headers(char *text)
+{
+    //遇到空行，表示头部字段解析完毕
+    if (text[0] == '\0')
+    {
+        /*如果数据包有消息体，则还需要读取m_content_length字节的消息体，
+        状态机转移到CHECK_STATE_CONTENT状态*/
+        if (m_content_length != 0)
+        {
+            m_check_state = CHECK_STATE_CONTENT;
+            return NO_REQUEST;
+        }
+        //否则说明我们得到了一个完整的请求
+        else
+        {
+            return GET_REQUEST;
+        }
+    }
+    //处理"Content-Length"头部字段
+    else if (strncasecmp(text, "Content-Length:", 15) == 0)
+    {
+        text += 15;
+        text += strspn(text, " \t");
+        m_content_length = atol(text);
+    }
+    else //其他头部字段都不处理
+    {
+    }
+
+    return NO_REQUEST;
+}
+
+TcpConnect::RESULT_CODE TcpConnect::parse_content(char *text)
+{
+    if (m_content == nullptr)
+    {
+        m_content = new char[m_content_length + 1];
+    }
+    if (m_read_idx >= (m_content_length - m_content_len_have_read + m_checked_idx))
+    {
+        /*如果当前已读到数据包正文的结尾
+        将数据拷贝至m_content并加上'\0'*/
+        strncpy(m_content + m_content_len_have_read, text, m_content_length - m_content_len_have_read);
+        m_content[m_content_length] = '\0';
+        m_checked_idx += m_content_length - m_content_len_have_read;
+        m_start_line = m_checked_idx;
+        m_content_len_have_read = m_content_length;
+        return GET_REQUEST;
+    }
+    else
+    {
+        /*如果当前未读到数据包正文的结尾
+        将读到的数据段拷贝至m_content并返回NO_REQUEST等待下次数据*/
+        strncpy(m_content + m_content_len_have_read, text, m_read_idx - m_checked_idx);
+        m_content_len_have_read += m_read_idx - m_checked_idx;
+        m_start_line = m_read_idx;
+        m_checked_idx = m_read_idx;
+        return NO_REQUEST;
+    }
+}
+/*
+    if (m_content == nullptr)
+    {
+        m_content = new char[m_content_length + 1];
+    }
+    if (m_read_idx >= (m_content_length - m_content_len_have_read + m_checked_idx))
+    {
+        strncpy(m_content + m_content_len_have_read, text, m_content_length - m_content_len_have_read);
+        m_content[m_content_length] = '\0';
+        m_checked_idx += m_content_length - m_content_len_have_read;
+        m_start_line = m_checked_idx;
+        m_content_len_have_read = m_content_length;
+        return GET_REQUEST;
+    }
+    else
+    {
+        strncpy(m_content + m_content_len_have_read, text, m_read_idx - m_checked_idx);
+        m_start_line = m_read_idx;
+        m_checked_idx = m_read_idx;
+        m_content_len_have_read += m_read_idx - m_checked_idx;
+        return NO_REQUEST;
+    }
+*/
+
+const char *TcpConnect::ReqToString(TcpConnect::PACKET_TYPE r)
+{
+    switch (r)
+    {
+    case HBT:
+        return "HBT";
+    case LGN:
+        return "LGN";
+    case RGT:
+        return "RGT";
+    case LGT:
+        return "LGT";
+    case SCU:
+        return "SCU";
+    case ADF:
+        return "ADF";
+    case DEF:
+        return "DEF";
+    case RFR:
+        return "RFR";
+    case RCN:
+        return "RCN";
+    case GFI:
+        return "GFI";
+    case AFI:
+        return "AFI";
+    case DFI:
+        return "DFI";
+    case SMA:
+        return "SMA";
+    case RMA:
+        return "RMA";
+    case RDY:
+        return "RDY";
+    default:
+        return "ERR";
+    }
+}
+
+void TcpConnect::reconnect()
+{
+
+    if (m_enable)
+    {
+        return;
+    }
+
+    m_client->close();
+
+    m_client->connectToHost(QHostAddress("1.117.146.195"), 4399);
+
+    QTimer::singleShot(RECONNECT_INTERVAL * 1000, this, [=]()
+                       { reconnect(); });
+}
+
+void TcpConnect::relogin()
+{
+    m_latestTime = QDateTime::currentDateTime().toTime_t();
+
+    if (m_sessionID != "")
+    {
+        QString content = m_sessionID + "\r\n";
+        // QString转char
+        char *ctmp;
+        QByteArray ba = content.toLatin1();
+        ctmp = ba.data();
+        write_data(DataPacket(RCN, content.length(), ctmp));
+    }
+    m_enable = true;
+}
+
+void TcpConnect::checkConnect()
+{
+    if (!m_enable)
+    {
+        QTimer::singleShot(HBT_INTERVAL * 1000, this, [=]()
+                           { checkConnect(); });
+        return;
+    }
+    uint nowTime = QDateTime::currentDateTime().toTime_t();
+    if (nowTime - m_latestTime > LONGEST_NO_DATA_INTERVAL)
+    {
+        emit disconnected();
+        return;
+    }
+
+    QString content = QString::number(nowTime);
+    content += "\r\n";
+
+    // QString转char
+    char *ctmp;
+    QByteArray ba = content.toLatin1();
+    ctmp = ba.data();
+    write_data(DataPacket(HBT, content.length(), ctmp));
+    QTimer::singleShot(HBT_INTERVAL * 1000, this, [=]()
+                       { checkConnect(); });
+}
+
+bool TcpConnect::write_data(const DataPacket &data)
+{
+    add_status_line(ReqToString(data.category));
+    add_headers(data.content_len);
+    if (!add_content(data.content))
+    {
+        return false;
+    }
+    m_client->write(m_write_buf, m_write_idx);
+    initWrite();
+    return true;
+}
+
 bool TcpConnect::add_response(const char *format, ...)
 {
     if (m_write_idx >= WRITE_BUFFER_SIZE)
@@ -486,9 +564,9 @@ bool TcpConnect::add_response(const char *format, ...)
         va_end(arg_list);
         return false;
     }
+
     m_write_idx += len;
     va_end(arg_list);
-
     return true;
 }
 
@@ -504,9 +582,9 @@ bool TcpConnect::add_status_line(const char *status)
 
 bool TcpConnect::add_headers(int content_length)
 {
-    add_content_length(content_length);
-    add_blank_line();
-    return true;
+    if (!add_content_length(content_length))
+        return false;
+    return add_blank_line();
 }
 
 bool TcpConnect::add_content_length(int content_length)

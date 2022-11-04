@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -18,12 +19,20 @@ QT_BEGIN_NAMESPACE
 class Ui_CustomMainWindow
 {
 public:
+    QLabel *lbl_chatUsername;
 
     void setupUi(QWidget *CustomMainWindow)
     {
         if (CustomMainWindow->objectName().isEmpty())
             CustomMainWindow->setObjectName(QString::fromUtf8("CustomMainWindow"));
         CustomMainWindow->resize(702, 502);
+        lbl_chatUsername = new QLabel(CustomMainWindow);
+        lbl_chatUsername->setObjectName(QString::fromUtf8("lbl_chatUsername"));
+        lbl_chatUsername->setGeometry(QRect(329, 24, 281, 18));
+        QFont font;
+        font.setFamily(QString::fromUtf8("Microsoft YaHei"));
+        font.setPointSize(12);
+        lbl_chatUsername->setFont(font);
 
         retranslateUi(CustomMainWindow);
 
@@ -33,6 +42,7 @@ public:
     void retranslateUi(QWidget *CustomMainWindow)
     {
         CustomMainWindow->setWindowTitle(QCoreApplication::translate("CustomMainWindow", "CustomMainWindow", nullptr));
+        lbl_chatUsername->setText(QString());
     } // retranslateUi
 
 };

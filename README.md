@@ -1,9 +1,19 @@
 # didactic-pancake-client
 基于QT的聊天社交软件客户端
 
+项目介绍
+--
+该项目实现了微信电脑端的主要功能和界面，使用QT 5.13进行客户端界面开发和逻辑的实现
+
 功能描述
 --
-可实现用户注册&登录，添加好友，发起聊天功能，后续可能会添加其他社交功能
+* 注册英文用户名并设置密码
+* 通过用户名搜索并添加好友
+* 接收或拒绝好友请求
+* 向好友发起聊天
+* 删除好友
+* 对方不在线时消息可缓存
+* 聊天记录本地存储
 
 Todo
 --
@@ -13,8 +23,9 @@ Todo
 * [x] 实现删除好友的功能
 * [x] 实现好友列表和好友信息的界面
 * [x] 实现网络状态的检测和断线重连
-* [ ] 实现消息列表的界面
-* [ ] 实现文字聊天的界面和实现
+* [x] 实现消息列表的界面
+* [x] 实现文字聊天的界面和实现
+* [x] 实现聊天记录的本地存储
 * [ ] 实现更换头像功能
 
 拓展功能
@@ -50,6 +61,15 @@ Todo
 
 ![](/introduction/FriendRequestsWindow.jpg)
 
+* 聊天右键菜单
+
+![](/introduction/ChatBarRightClick.jpg)
+
+* 聊天对话框
+
+![](/introduction/MessageWindow.jpg)
+
+
 * 好友列表
 
 ![](/introduction/FriendBar.jpg)
@@ -57,4 +77,8 @@ Todo
 * 好友信息界面
 
 ![](/introduction/FriendInformation.jpg)
+
+* 好友右键菜单
+
+![](/introduction/FriendBarRightClick.jpg)
 

@@ -10,6 +10,8 @@
 #include "StatusBar.h"
 #include "FriendBar.h"
 #include "FriendInformation.h"
+#include "ChatBar.h"
+#include "MessageBar.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -37,14 +39,20 @@ private:
     void initThis();
     //初始化标题栏
     void initTitleBar();
+    //初始化控件
+    void initControl();
     //初始化侧边栏
     void initSideBar();
     //初始化状态栏
     void initStatusBar();
-    //初始化状态栏
+    //初始化好友栏
     void initFriendBar();
     //初始化好友信息栏
     void initFriendInformationBar();
+    //初始化聊天栏
+    void initChatBar();
+    //初始化消息栏
+    void initMessageBar();
 
     Ui::CustomMainWindow *ui;
 
@@ -65,6 +73,12 @@ private:
 
     //好友信息栏
     FriendInformation *m_friendInformation;
+
+    //聊天栏
+    ChatBar *m_chatBar;
+
+    //消息栏
+    MessageBar *m_messageBar;
 };
 
 #endif // CUSTOMMAINWINDOW_H

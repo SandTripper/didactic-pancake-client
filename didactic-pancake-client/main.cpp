@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 
     if (loginData.sessionID != "") //登录成功，获取到sessionID，进入主窗口
     {
+        SQLConnect::getInstance()->initUserDataConnect(loginData.username);
         CustomMainWindow w(loginData.sessionID, loginData.username);
         w.move(loginData.x, loginData.y); //移动到和登录窗口一样的位置
         w.show();

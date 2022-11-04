@@ -58,6 +58,19 @@
     <string/>
    </property>
   </widget>
+  <widget class="RedPoint" name="lbl_redpoint">
+   <property name="geometry">
+    <rect>
+     <x>32</x>
+     <y>96</y>
+     <width>16</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
@@ -67,6 +80,11 @@
    <slots>
     <signal>clicked()</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>RedPoint</class>
+   <extends>QLabel</extends>
+   <header>RedPoint.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

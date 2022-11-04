@@ -29,5 +29,10 @@
         <file>resource/default_avatar.png</file>
         <file>resource/red_point.png</file>
         <file>resource/pancake2.png</file>
+        <file>resource/btn_emoji_hover.png</file>
+        <file>resource/btn_emoji_normal.png</file>
+        <file>resource/btn_emoji_press.png</file>
+        <file>resource/loading.gif</file>
+        <file>resource/message_tone.wav</file>
     </qresource>
 </RCC>

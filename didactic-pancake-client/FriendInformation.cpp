@@ -118,15 +118,23 @@ void FriendInformation::paintEvent(QPaintEvent *event)
     pathBack.addRoundedRect(QRect(0, 0, this->width(), this->height()), 0, 0);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.fillPath(pathBack, QBrush(QColor(m_colorR, m_colorG, m_colorB)));
-    // 当窗口最大化或者还原后，窗口高度变了，好友信息栏的高度应当一起改变;
-    if (this->height() != this->parentWidget()->height() - 2 - 61)
-    {
-        this->setFixedHeight(this->parentWidget()->height() - 2 - 61);
-    }
     // 当窗口最大化或者还原后，窗口宽度变了，好友信息栏的宽度应当一起改变;
     if (this->width() != this->parentWidget()->width() - 1 - 305)
     {
         this->setFixedWidth(this->parentWidget()->width() - 1 - 305);
+        this->ui->lbl_background->move((this->width() - ui->lbl_background->width()) / 2, (this->height() - ui->lbl_background->height()) / 2 - 10);
     }
+    // 当窗口最大化或者还原后，窗口高度变了，好友信息栏的高度应当一起改变;
+    if (this->height() != this->parentWidget()->height() - 2 - 61)
+    {
+        this->setFixedHeight(this->parentWidget()->height() - 2 - 61);
+        this->ui->lbl_background->move((this->width() - ui->lbl_background->width()) / 2, (this->height() - ui->lbl_background->height()) / 2 - 10);
+    }
+
     QWidget::paintEvent(event);
+}
+
+void FriendInformation::on_btn_send_message_clicked()
+{
+    emit changeToUserChat(ui->lbl_user_name->text());
 }

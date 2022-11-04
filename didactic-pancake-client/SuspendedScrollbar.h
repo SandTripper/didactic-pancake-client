@@ -6,6 +6,7 @@
 #include <QListWidget>
 #include <QScrollArea>
 #include <QPropertyAnimation>
+#include <QTextEdit>
 
 //悬浮滚动条-例子说明
 //鼠标移动到控件上时显示滚动条，鼠标离开控件则隐藏滚动条
@@ -39,6 +40,8 @@ public slots:
     void slt_valueChange_widget(int);
 
 protected:
+    //显示滚动条
+    void showScrollBar();
     void resizeEvent(QResizeEvent *e);
     void enterEvent(QEvent *);
     void leaveEvent(QEvent *);
@@ -61,6 +64,27 @@ protected:
     void resizeEvent(QResizeEvent *e);
     void enterEvent(QEvent *);
     void leaveEvent(QEvent *);
+};
+
+// QTextEdit 悬浮滚动条基类
+class SuspendedScrollBar_TextEdit : public QTextEdit
+{
+    Q_OBJECT
+public:
+    explicit SuspendedScrollBar_TextEdit(QWidget *parent = 0);
+    ~SuspendedScrollBar_TextEdit() {}
+
+public slots:
+    void slt_valueChange_widget(int);
+
+protected:
+    void resizeEvent(QResizeEvent *e);
+
+private:
+    void paintEvent(QPaintEvent *e);
+
+private:
+    SuspendedScrollBar *m_pVertScrollBar; //悬浮滚动条
 };
 
 #endif // SUSPENDEDSCROLLBAR_H
