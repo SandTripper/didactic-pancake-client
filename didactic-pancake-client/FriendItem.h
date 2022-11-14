@@ -23,6 +23,9 @@ public:
 
     ~FriendItem();
 
+    //更新头像
+    void updateAvatar();
+
 public:
     QString m_username;
 
@@ -73,6 +76,9 @@ public:
 
     //删除一个好友框
     void deleteFriendItem(const QString &username);
+
+    //更新好友头像
+    void updateFriendItemAvatar(const QString &username);
 
 signals:
     void chooseFriend(QString username);

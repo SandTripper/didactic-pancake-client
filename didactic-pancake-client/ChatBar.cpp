@@ -2,10 +2,15 @@
 
 #include "ChatBar.h"
 #include "ui_ChatBar.h"
+#include "Config.h"
+#include "FileProcess.h"
+
+#include <QApplication>
 
 ChatBar::ChatBar(QWidget *parent) : QWidget(parent),
                                     m_colorR(0), m_colorG(0), m_colorB(0),
-                                    ui(new Ui::ChatBar)
+                                    ui(new Ui::ChatBar),
+                                    m_tcpConnect(TcpConnect::getInstance())
 {
     ui->setupUi(this);
 
@@ -30,6 +35,8 @@ void ChatBar::initThis()
     connect(ui->listWidget, &ChatListWidget::hideUserChat, this, &ChatBar::hideUserChat);
 
     connect(ui->listWidget, &ChatListWidget::deleteUserChat, this, &ChatBar::deleteUserChat);
+
+    connect(m_tcpConnect, &TcpConnect::RAVpackAdd, this, &ChatBar::handleRAVpackAdd);
 }
 
 void ChatBar::initControl()
@@ -64,6 +71,36 @@ void ChatBar::handleDeleteFriend(QString username)
 void ChatBar::handleItemClicked(QListWidgetItem *item)
 {
     emit selectUser(dynamic_cast<ChatItem *>(ui->listWidget->itemWidget(item))->m_username);
+}
+
+void ChatBar::handleRAVpackAdd()
+{
+    for (const auto &data : m_tcpConnect->vec[TcpConnect::RAV])
+    {
+
+        if (data.content_len == 0)
+            continue;
+
+        //解析图片数据
+        QString username = "";
+        for (int i = 0; i < data.content_len; i++)
+        {
+            if (data.content[i] == '\r' && data.content[i + 1] == '\n')
+            {
+                QByteArray byteArray(data.content + i + 2, data.content_len - i - 2);
+                FileProcess::saveFile(byteArray, QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original", username + ".png");
+                QPixmap pix;
+                pix.loadFromData(byteArray);
+                FileProcess::saveQPixmap(pix.scaled(40, 40, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/40x40", username + ".png");
+                FileProcess::saveQPixmap(pix.scaled(34, 34, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34", username + ".png");
+                emit friendAvatarChanged(username);
+                ui->listWidget->updateChatItemAvatar(username);
+                break;
+            }
+            username += data.content[i];
+        }
+    }
+    m_tcpConnect->vec[TcpConnect::RAV].clear();
 }
 
 void ChatBar::paintEvent(QPaintEvent *event)

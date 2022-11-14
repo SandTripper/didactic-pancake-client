@@ -29,6 +29,9 @@ public:
     //模态显示函数
     void exec();
 
+    //处理头像更新
+    void handleFriendAvatarAdd(const QString &username);
+
 protected:
     //重写关闭事件
     void closeEvent(QCloseEvent *event);

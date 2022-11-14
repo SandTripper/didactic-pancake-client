@@ -31,8 +31,8 @@ void MessageWidget::initThis()
     //设置窗口无边框
     setWindowFlags(Qt::FramelessWindowHint);
 
-    connect(ui->listWidget, &MessageListWidget::addMsg, [=](const QString &content,long long l_time)
-            { emit messageAdd(m_tarUserName, content,l_time); });
+    connect(ui->listWidget, &MessageListWidget::addMsg, [=](const QString &content, long long l_time)
+            { emit messageAdd(m_tarUserName, content, l_time); });
 }
 
 void MessageWidget::initControl()
@@ -147,6 +147,16 @@ std::map<long long, MessageItem *> MessageWidget::getSendingMessage()
 void MessageWidget::setSendingMessage(const std::map<long long, MessageItem *> &sendingMessage)
 {
     m_sendingMessage = sendingMessage;
+}
+
+void MessageWidget::updateMyAvatar()
+{
+    ui->listWidget->updateMyAvatar();
+}
+
+void MessageWidget::updateTargetAvatar()
+{
+    ui->listWidget->updateTargetAvatar();
 }
 
 void MessageWidget::on_btn_send_clicked()

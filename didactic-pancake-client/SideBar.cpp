@@ -1,15 +1,20 @@
 #include "SideBar.h"
 #include "ui_SideBar.h"
-#include "SQLConnect.h"
 
 #include <QPainter>
 #include <QMouseEvent>
+
+#include "SQLConnect.h"
+#include "SelectNewAvatarWindow.h"
+#include "PictureViewingWindow.h"
+#include "Config.h"
 
 SideBar::SideBar(QWidget *parent) : QWidget(parent),
                                     m_isMaxWindow(false),
                                     m_colorR(0), m_colorG(0), m_colorB(0),
                                     ui(new Ui::SideBar),
-                                    m_unreadNum(SQLConnect::getInstance()->getAllunReadNum())
+                                    m_unreadNum(SQLConnect::getInstance()->getAllunReadNum()),
+                                    m_changeAvatarAction(new QAction("更换头像"))
 {
     ui->setupUi(this);
 
@@ -19,6 +24,8 @@ SideBar::SideBar(QWidget *parent) : QWidget(parent),
 
 SideBar::~SideBar()
 {
+    emit closed();
+    delete m_changeAvatarAction;
     delete ui;
 }
 
@@ -31,6 +38,8 @@ void SideBar::initThis()
     on_btn_change_to_chat_clicked();
 
     ui->lbl_redpoint->setNum(m_unreadNum);
+
+    connect(m_changeAvatarAction, &QAction::triggered, this, &SideBar::on_change_avatar_triggered);
 }
 
 void SideBar::initControl()
@@ -56,12 +65,40 @@ void SideBar::initControl()
     ui->btn_change_to_chat->setCursor(QCursor(Qt::PointingHandCursor));
     ui->btn_change_to_friend->setCursor(QCursor(Qt::PointingHandCursor));
 
-    ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + Config::loginedUserName + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix.scaled(ui->lbl_user_avatar->width(), ui->lbl_user_avatar->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     ui->lbl_user_avatar->setScaledContents(true);
     ui->lbl_user_avatar->setCursor(QCursor(Qt::PointingHandCursor));
+    ui->lbl_user_avatar->getContextMenu()->addAction(m_changeAvatarAction);
 
     //设置消息红点大于99时显示99
     ui->lbl_redpoint->setPointType(RedPoint::SHOW99WHENBIGGER);
+}
+
+void SideBar::updateAvatar()
+{
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + Config::loginedUserName + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix.scaled(ui->lbl_user_avatar->width(), ui->lbl_user_avatar->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 }
 
 void SideBar::setBackgroundColor(int r, int g, int b)
@@ -129,6 +166,16 @@ void SideBar::mouseReleaseEvent(QMouseEvent *event)
     return QWidget::mouseReleaseEvent(event);
 }
 
+void SideBar::on_change_avatar_triggered()
+{
+    SelectNewAvatarWindow snaw;
+    connect(&snaw, &SelectNewAvatarWindow::myAvatarChanged, this, [=]()
+            {
+        updateAvatar();
+        emit myAvatarChanged(); });
+    snaw.setWindowModality(Qt::ApplicationModal);
+    snaw.exec();
+}
 void SideBar::on_btn_change_to_chat_clicked()
 {
     //通过设置其他按钮是否可用实现单选效果
@@ -145,4 +192,15 @@ void SideBar::on_btn_change_to_friend_clicked()
     ui->btn_change_to_friend->setDisabled(true);
 
     emit changeToFriend();
+}
+
+void SideBar::on_lbl_user_avatar_clicked()
+{
+    PictureViewingWindow *pxw = new PictureViewingWindow(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + Config::loginedUserName + ".png");
+    //关闭时自动释放内存
+    pxw->setAttribute(Qt::WA_DeleteOnClose);
+    pxw->show();
+    Config::openedPictureViewingWindow.emplace_back(pxw);
+    connect(pxw, &PictureViewingWindow::closed, this, [=]()
+            { Config::openedPictureViewingWindow.back() = nullptr; });
 }

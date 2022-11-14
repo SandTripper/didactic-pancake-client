@@ -19,13 +19,20 @@ class FriendRequsetsItem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FriendRequsetsItem(QWidget *parent = nullptr, const QString &username = "", QListWidgetItem *item = nullptr);
+    explicit FriendRequsetsItem(const QString &username, QWidget *parent = nullptr);
 
     ~FriendRequsetsItem();
 
+    //更新头像
+    void updateAvatar();
+
+public:
+    //申请者的名字
+    QString m_username;
+
 signals:
-    //将自己从所在的列表删除
-    void deleteMe(QListWidgetItem *object);
+    //删除自己
+    void deleteMe(const QString &username);
 
 private slots:
     //点击接受按钮
@@ -34,7 +41,7 @@ private slots:
     void on_btn_reject_clicked();
 
 private:
-    //初始化本窗口
+    //初始化自己
     void initThis();
     // 初始化控件;
     void initControl();
@@ -49,6 +56,8 @@ private:
     TcpConnect *m_connect;
 };
 
+//////////////////////////////////////////////////////////////////
+
 class FriendRequsetsListWidget : public SuspendedScrollBar_ListWidget
 {
     Q_OBJECT
@@ -61,9 +70,16 @@ public:
     void addRequest(const QString &username);
 
     //删除申请者窗口
-    void deleteRequest(QListWidgetItem *object);
+    void deleteRequest(const QString &username);
+
+    void handleFriendAvatarAdd(const QString &username);
+
+public:
+    //存储Item对应的widget
+    std::vector<std::pair<QListWidgetItem *, FriendRequsetsItem *>> m_items;
 
 private:
+    //初始化自己
     void initThis();
 };
 

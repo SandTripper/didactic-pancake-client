@@ -4,25 +4,24 @@
 #include "ui_CustomMainWindow.h"
 #include "LoginWindow.h"
 #include "SQLConnect.h"
+#include "Config.h"
+#include "PictureViewingWindow.h"
 
 #include <QSoundEffect>
 
-CustomMainWindow::CustomMainWindow(QString sessionID, QString username, QWidget *parent) : BaseWindow(parent),
-                                                                                           ui(new Ui::CustomMainWindow),
-                                                                                           m_sessionID(sessionID),
-                                                                                           m_connect(TcpConnect::getInstance()),
-                                                                                           m_sideBar(new SideBar(this)),
-                                                                                           m_statusBar(new StatusBar(this)),
-                                                                                           m_friendBar(new FriendBar(this)),
-                                                                                           m_friendInformation(new FriendInformation(this)),
-                                                                                           m_chatBar(new ChatBar(this)),
-                                                                                           m_messageBar(new MessageBar(this))
+CustomMainWindow::CustomMainWindow(QWidget *parent) : BaseWindow(parent),
+                                                      ui(new Ui::CustomMainWindow),
+                                                      m_connect(TcpConnect::getInstance()),
+                                                      m_sideBar(new SideBar(this)),
+                                                      m_statusBar(new StatusBar(this)),
+                                                      m_friendBar(new FriendBar(this)),
+                                                      m_friendInformation(new FriendInformation(this)),
+                                                      m_chatBar(new ChatBar(this)),
+                                                      m_messageBar(new MessageBar(this))
 {
     ui->setupUi(this);
 
     // this->hide();
-
-    setWindowTitle(username); //将窗口名字设为登录的用户名
 
     initThis();
     initControl();
@@ -53,6 +52,8 @@ void CustomMainWindow::initThis()
 {
     //设置背景颜色
     setBackgroundColor(214, 214, 214);
+
+    setWindowTitle(Config::loginedUserName); //将窗口名字设为登录的用户名
 }
 
 void CustomMainWindow::initTitleBar()
@@ -87,6 +88,8 @@ void CustomMainWindow::initSideBar()
 
 void CustomMainWindow::initStatusBar()
 {
+    connect(m_chatBar, &ChatBar::friendAvatarChanged, m_statusBar, &StatusBar::friendAvatarChanged);
+
     m_statusBar->setBackgroundColor(250, 250, 250);
     m_statusBar->move(55, 1);
 }
@@ -97,6 +100,8 @@ void CustomMainWindow::initFriendBar()
             { m_friendBar->setVisible(false); });
     connect(m_sideBar, &SideBar::changeToFriend, this, [=]()
             { m_friendBar->setVisible(true); });
+    connect(m_chatBar, &ChatBar::friendAvatarChanged, this, [=](const QString &username)
+            { m_friendBar->handleFriendAvatarChanged(username); });
 
     m_friendBar->setVisible(false);
     m_friendBar->setBackgroundColor(230, 229, 229);
@@ -159,6 +164,12 @@ void CustomMainWindow::initMessageBar()
     connect(m_chatBar, &ChatBar::hideUserChat, m_messageBar, &MessageBar::hideUserWidget);
     connect(m_chatBar, &ChatBar::deleteUserChat, m_messageBar, &MessageBar::deleteUserWidget);
 
+    connect(m_chatBar, &ChatBar::friendAvatarChanged, m_messageBar, [=](const QString &username)
+            { m_messageBar->handleFriendAvatarChanged(username); });
+
+    connect(m_sideBar, &SideBar::myAvatarChanged, m_messageBar, [=]()
+            { m_messageBar->handleMyAvatarChanged(); });
+
     m_messageBar->setVisible(true);
     m_messageBar->setBackgroundColor(245, 245, 245);
     m_messageBar->move(305, 62);
@@ -176,4 +187,17 @@ void CustomMainWindow::onButtonMaxClicked()
     //传值给侧边栏和状态栏，以处理拖动窗口逻辑
     m_sideBar->m_isMaxWindow = true;
     m_statusBar->m_isMaxWindow = true;
+}
+
+void CustomMainWindow::closeEvent(QCloseEvent *event)
+{
+    for (auto pvw : Config::openedPictureViewingWindow)
+    {
+        qDebug() << pvw;
+        if (pvw != nullptr)
+        {
+            pvw->close();
+        }
+    }
+    return BaseWindow::closeEvent(event);
 }

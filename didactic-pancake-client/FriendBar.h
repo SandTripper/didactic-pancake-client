@@ -27,6 +27,9 @@ public:
     //获取FriendListWidget对象指针
     FriendListWidget *getListWidget();
 
+    //处理好友头像改变
+    void handleFriendAvatarChanged(const QString &username);
+
 signals:
     //添加好友的信号
     void addFriend(QString username);

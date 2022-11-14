@@ -27,6 +27,11 @@ public:
     // 设置消息栏背景色;
     void setBackgroundColor(int r, int g, int b);
 
+    //自己的头像更改
+    void handleMyAvatarChanged();
+    //好友的头像更改
+    void handleFriendAvatarChanged(const QString &username);
+
 signals:
     void messageAdd(const QString &username, const QString &content, long long l_time);
     //设置显示的聊天窗口的用户

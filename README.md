@@ -26,7 +26,7 @@ Todo
 * [x] 实现消息列表的界面
 * [x] 实现文字聊天的界面和实现
 * [x] 实现聊天记录的本地存储
-* [ ] 实现更换头像功能
+* [x] 实现更换头像功能
 
 拓展功能
 --
@@ -81,4 +81,16 @@ Todo
 * 好友右键菜单
 
 ![](/introduction/FriendBarRightClick.jpg)
+
+* 头像右键菜单
+  
+![](/introduction/MyAvatarRightClick.jpg)
+
+* 更换头像窗口
+  
+![](/introduction/ChangeAvatarWindow.jpg)
+
+* 图片查看窗口
+  
+![](/introduction/PictureViewingWindow.jpg)
 

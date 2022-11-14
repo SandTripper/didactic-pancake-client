@@ -47,6 +47,8 @@ protected:
 private slots:
     void on_btn_send_message_clicked();
 
+    void on_lbl_user_avatar_clicked();
+
 private:
     //初始化本窗口
     void initThis();
@@ -57,6 +59,9 @@ private:
 
 private:
     Ui::FriendInformation *ui;
+
+    //当前显示的用户名
+    QString m_username;
 };
 
 #endif // FRIENDINFORMATION_H

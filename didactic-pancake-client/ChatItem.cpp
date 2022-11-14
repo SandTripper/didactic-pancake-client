@@ -1,6 +1,7 @@
 #include "ChatItem.h"
 #include "ui_ChatItem.h"
 #include "SQLConnect.h"
+#include "Config.h"
 
 #include <QPainter>
 #include <QFile>
@@ -120,6 +121,23 @@ void ChatItem::clearUnreadNum()
     ui->lbl_redpoint->setNum(m_unreadNum = 0);
 }
 
+void ChatItem::updateAvatar()
+{
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/40x40/" + m_username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix);
+    ui->lbl_user_avatar->setScaledContents(true);
+}
+
 void ChatItem::initThis()
 {
     //设置为无边框窗口
@@ -133,7 +151,18 @@ void ChatItem::initThis()
 
 void ChatItem::initControl()
 {
-    ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/40x40/" + m_username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix);
     ui->lbl_user_avatar->setScaledContents(true);
 
     QFontMetrics fontWidth(ui->lbl_user_name->font());                                                //得到每个字符的宽度
@@ -420,6 +449,18 @@ void ChatListWidget::deleteChatItem(const QString &username)
     }
 
     SQLConnect::getInstance()->deleteChatItem(username);
+}
+
+void ChatListWidget::updateChatItemAvatar(const QString &username)
+{
+    for (int i = 0; i < (int)m_items.size(); ++i)
+    {
+        if (m_items[i].second->m_username.compare(username) == 0)
+        {
+            m_items[i].second->updateAvatar();
+            break;
+        }
+    }
 }
 
 void ChatListWidget::handleItemClicked(QListWidgetItem *item)

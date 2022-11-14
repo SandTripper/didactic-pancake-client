@@ -55,6 +55,11 @@ void FriendRequestsWindow::exec()
     m_Loop->exec(); //利用事件循环实现模态
 }
 
+void FriendRequestsWindow::handleFriendAvatarAdd(const QString &username)
+{
+    ui->listWidget->handleFriendAvatarAdd(username);
+}
+
 //重写关闭事件
 void FriendRequestsWindow::closeEvent(QCloseEvent *event)
 {

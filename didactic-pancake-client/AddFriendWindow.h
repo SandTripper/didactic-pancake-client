@@ -34,6 +34,12 @@ public:
     //模态显示函数
     void exec();
 
+    void updateAvatar();
+
+public:
+    //当前显示的用户
+    QString m_username;
+
 protected:
     //重写关闭事件
     void closeEvent(QCloseEvent *event);

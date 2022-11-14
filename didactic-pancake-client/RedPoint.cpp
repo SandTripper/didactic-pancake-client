@@ -6,7 +6,7 @@
 #include <QDebug>
 
 RedPoint::RedPoint(QWidget *parent) : QLabel(parent),
-    m_pointType(SHOW99WHENBIGGER)
+                                      m_pointType(SHOW99WHENBIGGER)
 {
     //本控件不响应鼠标事件
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -30,7 +30,6 @@ void RedPoint::setSize(int width, int height)
 void RedPoint::setNum(int num)
 {
 
-
     if (num == 0)
     {
         this->hide();
@@ -38,12 +37,11 @@ void RedPoint::setNum(int num)
     }
     this->show();
 
-
     QString text;
 
     if (num > 99)
     {
-        if(m_pointType == SHOW99WHENBIGGER)
+        if (m_pointType == SHOW99WHENBIGGER)
             text = QString::number(99);
         else
             text = "...";

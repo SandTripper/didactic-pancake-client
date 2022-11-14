@@ -7,6 +7,7 @@
 #include "ui_AddFriendWindow.h"
 #include "LabelPlus.h"
 #include "RegisterWindow.h"
+#include "Config.h"
 
 using namespace std;
 
@@ -112,6 +113,23 @@ void AddFriendWindow::exec()
     show();
     m_Loop = new QEventLoop(this);
     m_Loop->exec(); //利用事件循环实现模态
+}
+
+void AddFriendWindow::updateAvatar()
+{
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + m_username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix.scaled(ui->lbl_user_avatar->width(), ui->lbl_user_avatar->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    ui->lbl_user_avatar->setScaledContents(true);
 }
 
 //重写关闭事件
@@ -235,6 +253,7 @@ void AddFriendWindow::checkSearch()
 
         //显示搜索到的用户
         ui->lbl_user_name->setText(m_query_user_name);
+        m_username = m_query_user_name;
         ui->lbl_user_name->setVisible(true);
         ui->lbl_user_avatar->setVisible(true);
         ui->btn_add_friend->setVisible(true);

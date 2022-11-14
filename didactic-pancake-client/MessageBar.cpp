@@ -59,6 +59,22 @@ void MessageBar::setBackgroundColor(int r, int g, int b)
     update();
 }
 
+void MessageBar::handleMyAvatarChanged()
+{
+    if (nowUser != "")
+    {
+        m_userWidgets[nowUser]->updateMyAvatar();
+    }
+}
+
+void MessageBar::handleFriendAvatarChanged(const QString &username)
+{
+    if (nowUser != "" && nowUser == username)
+    {
+        m_userWidgets[nowUser]->updateTargetAvatar();
+    }
+}
+
 void MessageBar::hideUserWidget(const QString &username)
 {
     if (nowUser == username) //当前显示的是目标窗口

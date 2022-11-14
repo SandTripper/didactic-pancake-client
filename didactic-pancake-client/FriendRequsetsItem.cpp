@@ -3,15 +3,18 @@
 
 #include <QPainter>
 #include <QFile>
+#include <vector>
 
-FriendRequsetsItem::FriendRequsetsItem(QWidget *parent, const QString &username, QListWidgetItem *item) : QWidget(parent),
-                                                                                                          ui(new Ui::FriendRequsetsItem),
-                                                                                                          m_item(item),
-                                                                                                          m_connect(TcpConnect::getInstance())
+#include "Config.h"
+
+using namespace std;
+
+FriendRequsetsItem::FriendRequsetsItem(const QString &username, QWidget *parent) : QWidget(parent),
+                                                                                   m_username(username),
+                                                                                   ui(new Ui::FriendRequsetsItem),
+                                                                                   m_connect(TcpConnect::getInstance())
 {
     ui->setupUi(this);
-
-    ui->lbl_user_name->setText(username);
 
     initThis();
     initControl();
@@ -20,6 +23,23 @@ FriendRequsetsItem::FriendRequsetsItem(QWidget *parent, const QString &username,
 FriendRequsetsItem::~FriendRequsetsItem()
 {
     delete ui;
+}
+
+void FriendRequsetsItem::updateAvatar()
+{
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + m_username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix.scaled(ui->lbl_user_avatar->width(), ui->lbl_user_avatar->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    ui->lbl_user_avatar->setScaledContents(true);
 }
 
 void FriendRequsetsItem::initThis()
@@ -68,6 +88,8 @@ void FriendRequsetsItem::initControl()
     ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
     ui->lbl_user_avatar->setScaledContents(true);
     ui->lbl_user_avatar->setCursor(QCursor(Qt::PointingHandCursor));
+
+    ui->lbl_user_name->setText(m_username);
 }
 
 void FriendRequsetsItem::paintEvent(QPaintEvent *event)
@@ -98,10 +120,7 @@ void FriendRequsetsItem::on_btn_accept_clicked()
     ctmp = ba.data();
     m_connect->write_data(DataPacket(TcpConnect::RFR, content.length(), ctmp));
 
-    //将自己从列表中删除
-    emit deleteMe(m_item);
-
-    delete this;
+    emit deleteMe(m_username);
 }
 
 void FriendRequsetsItem::on_btn_reject_clicked()
@@ -114,10 +133,7 @@ void FriendRequsetsItem::on_btn_reject_clicked()
     ctmp = ba.data();
     m_connect->write_data(DataPacket(TcpConnect::RFR, content.length(), ctmp));
 
-    //将自己从列表中删除
-    emit deleteMe(m_item);
-
-    delete this;
+    emit deleteMe(m_username);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -147,16 +163,38 @@ void FriendRequsetsListWidget::initThis()
 void FriendRequsetsListWidget::addRequest(const QString &username)
 {
     QListWidgetItem *pItem = new QListWidgetItem();
-    FriendRequsetsItem *w_item = new FriendRequsetsItem(this, username, pItem);
+    FriendRequsetsItem *w_item = new FriendRequsetsItem(username, this);
     connect(w_item, &FriendRequsetsItem::deleteMe, this, &FriendRequsetsListWidget::deleteRequest);
     addItem(pItem);
     pItem->setSizeHint(QSize(0, w_item->height()));
     setItemWidget(pItem, w_item);
     pItem->setText(username);
+
+    connect(w_item, &FriendRequsetsItem::deleteMe, this, &FriendRequsetsListWidget::deleteRequest);
+
+    m_items.emplace_back(make_pair(pItem, w_item));
 }
 
-void FriendRequsetsListWidget::deleteRequest(QListWidgetItem *object)
+void FriendRequsetsListWidget::deleteRequest(const QString &username)
 {
-    removeItemWidget(object);
-    delete object;
+    for (int i = 0; i < (int)m_items.size(); ++i)
+    {
+        if (m_items[i].second->m_username == username)
+        {
+            delete takeItem(i);
+            m_items.erase(m_items.begin() + i);
+            --i;
+        }
+    }
+}
+
+void FriendRequsetsListWidget::handleFriendAvatarAdd(const QString &username)
+{
+    for (int i = 0; i < (int)m_items.size(); ++i)
+    {
+        if (m_items[i].second->m_username == username)
+        {
+            m_items[i].second->updateAvatar();
+        }
+    }
 }

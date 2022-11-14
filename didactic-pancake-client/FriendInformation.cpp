@@ -3,6 +3,8 @@
 #include "FriendInformation.h"
 #include "ui_FriendInformation.h"
 #include "FriendItem.h"
+#include "Config.h"
+#include "PictureViewingWindow.h"
 
 FriendInformation::FriendInformation(QWidget *parent) : QWidget(parent),
                                                         m_colorR(0), m_colorG(0), m_colorB(0),
@@ -45,12 +47,7 @@ void FriendInformation::initControl()
     ui->btn_send_message->setCursor(QCursor(Qt::PointingHandCursor));
 
     //好友头像
-    ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
-    ui->lbl_user_avatar->setScaledContents(true);
     ui->lbl_user_avatar->setCursor(QCursor(Qt::PointingHandCursor));
-
-    //好友用户名
-    ui->lbl_user_name->setText("SandTripper");
 
     //设置背景图片的透明度
     QPixmap pix1_(":/resource/pancake2.png");
@@ -97,13 +94,29 @@ void FriendInformation::changeToInformation()
 
 void FriendInformation::updateFriend(QString username)
 {
+    m_username = username;
     ui->lbl_user_name->setText(username);
+
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix);
+    ui->lbl_user_avatar->setScaledContents(true);
+
     changeToInformation();
 }
 
 void FriendInformation::deleteFriend(QString username)
 {
-    if (username == ui->lbl_user_name->text())
+    if (username == m_username)
     {
         changeToDefault();
     }
@@ -137,4 +150,15 @@ void FriendInformation::paintEvent(QPaintEvent *event)
 void FriendInformation::on_btn_send_message_clicked()
 {
     emit changeToUserChat(ui->lbl_user_name->text());
+}
+
+void FriendInformation::on_lbl_user_avatar_clicked()
+{
+    PictureViewingWindow *pxw = new PictureViewingWindow(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/original/" + m_username + ".png");
+    //关闭时自动释放内存
+    pxw->setAttribute(Qt::WA_DeleteOnClose);
+    pxw->show();
+    Config::openedPictureViewingWindow.emplace_back(pxw);
+    connect(pxw, &PictureViewingWindow::closed, this, [=]()
+            { Config::openedPictureViewingWindow.back() = nullptr; });
 }

@@ -34,6 +34,12 @@ public:
     static std::map<long long, MessageItem *> getSendingMessage();
     static void setSendingMessage(const std::map<long long, MessageItem *> &sendingMessage);
 
+    //更新自己的头像
+    void updateMyAvatar();
+
+    //更新聊天对象的头像
+    void updateTargetAvatar();
+
 public slots:
 
 signals:

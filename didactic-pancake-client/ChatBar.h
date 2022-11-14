@@ -33,6 +33,9 @@ signals:
     //删除用户聊天
     void deleteUserChat(const QString &username);
 
+    //好友头像更改
+    void friendAvatarChanged(const QString &username);
+
 public slots:
     //处理新增信息
     void handleMessageAdd(const QString &username, const QString &content, long long l_time);
@@ -50,6 +53,8 @@ protected:
 private slots:
     //处理listWidget控件的选择信号
     void handleItemClicked(QListWidgetItem *item);
+    //处理好友更换头像
+    void handleRAVpackAdd();
 
 private:
     //初始化本窗口
@@ -61,6 +66,8 @@ private:
 
 private:
     Ui::ChatBar *ui;
+
+    TcpConnect *m_tcpConnect;
 };
 
 #endif // CHATBAR_H

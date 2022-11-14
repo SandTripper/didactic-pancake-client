@@ -36,6 +36,9 @@ public:
     //清除未读消息数
     void clearUnreadNum();
 
+    //更新头像图片
+    void updateAvatar();
+
 public:
     QString m_username;
 
@@ -104,6 +107,9 @@ public:
     //删除一个聊天框
     void deleteChatItem(const QString &username);
 
+    //更新用户的头像
+    void updateChatItemAvatar(const QString &username);
+
 signals:
     void chooseChat(QString username);
     //增加的已读消息的数量
@@ -122,6 +128,9 @@ private:
 private:
     //存储用户名对应的QListWidgetItem指针和ChatItem指针
     std::vector<std::pair<QListWidgetItem *, ChatItem *>> m_items;
+
+    //当前登录的用户名
+    QString m_loginedUserName;
 };
 
 #endif // CHATITEM_H

@@ -73,7 +73,6 @@ void SQLConnect::addChatRecord(long long id, const QString &user, int isMine, lo
         sql_query.addBindValue(isSend);
         if (!sql_query.exec())
         {
-            qDebug()<<"fuck";
             qDebug() << sql_query.lastError();
         }
 
@@ -209,9 +208,9 @@ void SQLConnect::deleteChatRecord(const QString &username)
     m_database.close();
 }
 
-vector<tuple<QString, long long, int, QString,int>> SQLConnect::getChatItem()
+vector<tuple<QString, long long, int, QString, int>> SQLConnect::getChatItem()
 {
-    vector<tuple<QString, long long, int, QString,int>> res;
+    vector<tuple<QString, long long, int, QString, int>> res;
     if (!m_database.open())
     {
         qDebug() << "Error: Failed to connect database." << m_database.lastError();
@@ -234,7 +233,7 @@ vector<tuple<QString, long long, int, QString,int>> SQLConnect::getChatItem()
                 int unReadNum = sql_query.value(2).toInt();
                 QString content = sql_query.value(3).toString();
                 int isShow = sql_query.value(4).toInt();
-                res.emplace_back(make_tuple(userName, lastTime, unReadNum, content,isShow));
+                res.emplace_back(make_tuple(userName, lastTime, unReadNum, content, isShow));
             }
         }
 
@@ -276,7 +275,7 @@ int SQLConnect::getAllunReadNum()
     return res;
 }
 
-void SQLConnect::addChatItem(const QString &username, long long lastTime, int unreadNum, const QString &content,int isShow)
+void SQLConnect::addChatItem(const QString &username, long long lastTime, int unreadNum, const QString &content, int isShow)
 {
     if (!m_database.open())
     {
@@ -291,7 +290,7 @@ void SQLConnect::addChatItem(const QString &username, long long lastTime, int un
         sql_query.addBindValue(lastTime);
         sql_query.addBindValue(unreadNum);
         sql_query.addBindValue(content);
-         sql_query.addBindValue(isShow);
+        sql_query.addBindValue(isShow);
         if (!sql_query.exec())
         {
             qDebug() << sql_query.lastError();
@@ -302,7 +301,7 @@ void SQLConnect::addChatItem(const QString &username, long long lastTime, int un
     m_database.close();
 }
 
-void SQLConnect::setChatItem(const QString &username, long long lastTime, int unreadNum, const QString &content,int isShow)
+void SQLConnect::setChatItem(const QString &username, long long lastTime, int unreadNum, const QString &content, int isShow)
 {
     if (!m_database.open())
     {

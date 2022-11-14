@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>申请列表</string>
   </property>
   <widget class="FriendRequsetsListWidget" name="listWidget">
    <property name="geometry">

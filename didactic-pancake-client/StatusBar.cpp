@@ -74,6 +74,9 @@ void StatusBar::initControl()
     ui->lbl_red_point->setScaledContents(true);
     ui->lbl_red_point->setVisible(false);
     ui->lbl_red_point->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    connect(this, &StatusBar::friendAvatarChanged, this, [=](const QString &username)
+            { m_friend_requests_window->handleFriendAvatarAdd(username); });
 }
 
 void StatusBar::setBackgroundColor(int r, int g, int b)
@@ -170,6 +173,10 @@ void StatusBar::setNetStatus(int status)
 void StatusBar::on_btn_add_friend_clicked()
 {
     AddFriendWindow afw;
+    connect(this, &StatusBar::friendAvatarChanged, this, [=, &afw](const QString &username)
+            {
+        if(username == afw.m_username)
+            afw.updateAvatar(); });
     afw.setWindowModality(Qt::ApplicationModal);
     afw.exec();
 }

@@ -16,7 +16,7 @@ class MessageItem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MessageItem(QWidget *parent = nullptr);
+    explicit MessageItem(const QString &tarUserName, QWidget *parent = nullptr);
 
     enum User_Type
     {
@@ -35,6 +35,8 @@ public:
     inline QString text() { return m_msg; }
     inline QString time() { return m_time; }
     inline User_Type userType() { return m_userType; }
+
+    void updateAvatar();
 
 public:
     long long message_id;
@@ -69,6 +71,8 @@ private:
     bool m_isSending = false;
 
     AutoWrapLabel *m_lbl_text;
+
+    QString m_tarUserName;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -84,19 +88,25 @@ public:
     void initMessages();
 
     //添加一个自己的消息
-    MessageItem * addMyMessage(const QString &msg);
+    MessageItem *addMyMessage(const QString &msg);
 
     //添加一个对方的消息
-    void addOtherMessage(const QString &msg,long long l_time);
+    void addOtherMessage(const QString &msg, long long l_time);
 
     //添加时间信息
     void addTimeMessage(QString curMsgTime);
 
     //插入时间信息
-    bool insertTimeMessage(QString curMsgTime,int row);
+    bool insertTimeMessage(QString curMsgTime, int row);
 
     //添加加载信息
-    QListWidgetItem * addLoadMessage();
+    QListWidgetItem *addLoadMessage();
+
+    //更新自己的头像
+    void updateMyAvatar();
+
+    //更新聊天对象的头像
+    void updateTargetAvatar();
 
     //重写clear
     void clear();
@@ -107,7 +117,7 @@ public:
 
 signals:
     //添加信息
-    void addMsg(const QString &content,long long l_time);
+    void addMsg(const QString &content, long long l_time);
 
 private:
     void initThis();
@@ -125,7 +135,7 @@ private:
     std::vector<std::pair<QListWidgetItem *, MessageItem *>> m_items;
 
     //指向数据库连接对象的指针
-    SQLConnect*m_sqlconn;
+    SQLConnect *m_sqlconn;
 
     //所有聊天记录的条数
     int m_totalChatRecordNum;

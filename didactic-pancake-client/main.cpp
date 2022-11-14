@@ -5,6 +5,7 @@
 #include "CustomMainWindow.h"
 #include "LoginWindow.h"
 #include "FriendRequsetsItem.h"
+#include "Config.h"
 
 using namespace std;
 
@@ -24,8 +25,10 @@ int main(int argc, char *argv[])
 
     if (loginData.sessionID != "") //登录成功，获取到sessionID，进入主窗口
     {
+        Config::loginedUserName = loginData.username;
+        Config::loginedSessionID = loginData.sessionID;
         SQLConnect::getInstance()->initUserDataConnect(loginData.username);
-        CustomMainWindow w(loginData.sessionID, loginData.username);
+        CustomMainWindow w;
         w.move(loginData.x, loginData.y); //移动到和登录窗口一样的位置
         w.show();
         return a.exec();

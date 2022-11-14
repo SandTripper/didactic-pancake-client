@@ -65,10 +65,6 @@ void TcpConnect::initRead()
 
 void TcpConnect::initWrite()
 {
-    m_bytes_have_send = 0;
-    m_bytes_to_send = 0;
-    m_write_idx = 0;
-    memset(m_write_buf, '\0', WRITE_BUFFER_SIZE);
 }
 
 void TcpConnect::read_handler()
@@ -147,6 +143,12 @@ void TcpConnect::read_handler()
                 emit RMApackAdd();
                 break;
             case RDY:
+                break;
+            case SAV:
+                emit SAVpackAdd();
+                break;
+            case RAV:
+                emit RAVpackAdd();
                 break;
             default:
                 break;
@@ -344,6 +346,14 @@ TcpConnect::RESULT_CODE TcpConnect::parse_type_line(char *text)
     {
         m_method = RDY;
     }
+    else if (strcasecmp(method, "SAV") == 0)
+    {
+        m_method = SAV;
+    }
+    else if (strcasecmp(method, "RAV") == 0)
+    {
+        m_method = RAV;
+    }
     else
     {
         return BAD_REQUEST;
@@ -396,7 +406,7 @@ TcpConnect::RESULT_CODE TcpConnect::parse_content(char *text)
     {
         /*如果当前已读到数据包正文的结尾
         将数据拷贝至m_content并加上'\0'*/
-        strncpy(m_content + m_content_len_have_read, text, m_content_length - m_content_len_have_read);
+        memcpy(m_content + m_content_len_have_read, text, m_content_length - m_content_len_have_read);
         m_content[m_content_length] = '\0';
         m_checked_idx += m_content_length - m_content_len_have_read;
         m_start_line = m_checked_idx;
@@ -407,7 +417,7 @@ TcpConnect::RESULT_CODE TcpConnect::parse_content(char *text)
     {
         /*如果当前未读到数据包正文的结尾
         将读到的数据段拷贝至m_content并返回NO_REQUEST等待下次数据*/
-        strncpy(m_content + m_content_len_have_read, text, m_read_idx - m_checked_idx);
+        memcpy(m_content + m_content_len_have_read, text, m_read_idx - m_checked_idx);
         m_content_len_have_read += m_read_idx - m_checked_idx;
         m_start_line = m_read_idx;
         m_checked_idx = m_read_idx;
@@ -421,7 +431,7 @@ TcpConnect::RESULT_CODE TcpConnect::parse_content(char *text)
     }
     if (m_read_idx >= (m_content_length - m_content_len_have_read + m_checked_idx))
     {
-        strncpy(m_content + m_content_len_have_read, text, m_content_length - m_content_len_have_read);
+        memcpy(m_content + m_content_len_have_read, text, m_content_length - m_content_len_have_read);
         m_content[m_content_length] = '\0';
         m_checked_idx += m_content_length - m_content_len_have_read;
         m_start_line = m_checked_idx;
@@ -430,7 +440,7 @@ TcpConnect::RESULT_CODE TcpConnect::parse_content(char *text)
     }
     else
     {
-        strncpy(m_content + m_content_len_have_read, text, m_read_idx - m_checked_idx);
+        memcpy(m_content + m_content_len_have_read, text, m_read_idx - m_checked_idx);
         m_start_line = m_read_idx;
         m_checked_idx = m_read_idx;
         m_content_len_have_read += m_read_idx - m_checked_idx;
@@ -472,6 +482,10 @@ const char *TcpConnect::ReqToString(TcpConnect::PACKET_TYPE r)
         return "RMA";
     case RDY:
         return "RDY";
+    case SAV:
+        return "SAV";
+    case RAV:
+        return "RAV";
     default:
         return "ERR";
     }
@@ -538,61 +552,17 @@ void TcpConnect::checkConnect()
 
 bool TcpConnect::write_data(const DataPacket &data)
 {
-    add_status_line(ReqToString(data.category));
-    add_headers(data.content_len);
-    if (!add_content(data.content))
-    {
-        return false;
-    }
-    m_client->write(m_write_buf, m_write_idx);
-    initWrite();
+    //    add_status_line(ReqToString(data.category));
+    //    add_headers(data.content_len);
+    //    if (!add_content(data.content))
+    //    {
+    //        return false;
+    //    }
+    //    m_client->write(m_write_buf, m_write_idx);
+    //    initWrite();
+    char *buf = nullptr;
+    int len = DataPacket::get_format(data, buf);
+    m_client->write(buf, len);
+    delete[] buf;
     return true;
-}
-
-bool TcpConnect::add_response(const char *format, ...)
-{
-    if (m_write_idx >= WRITE_BUFFER_SIZE)
-    {
-        return false;
-    }
-    va_list arg_list;
-    va_start(arg_list, format);
-    int len = vsnprintf(m_write_buf + m_write_idx,
-                        WRITE_BUFFER_SIZE - 1 - m_write_idx, format, arg_list);
-    if (len >= (WRITE_BUFFER_SIZE - 1 - m_write_idx))
-    {
-        va_end(arg_list);
-        return false;
-    }
-
-    m_write_idx += len;
-    va_end(arg_list);
-    return true;
-}
-
-bool TcpConnect::add_content(const char *content)
-{
-    return add_response("%s", content);
-}
-
-bool TcpConnect::add_status_line(const char *status)
-{
-    return add_response("%s\r\n", status);
-}
-
-bool TcpConnect::add_headers(int content_length)
-{
-    if (!add_content_length(content_length))
-        return false;
-    return add_blank_line();
-}
-
-bool TcpConnect::add_content_length(int content_length)
-{
-    return add_response("Content-Length: %d\r\n", content_length);
-}
-
-bool TcpConnect::add_blank_line()
-{
-    return add_response("%s", "\r\n");
 }

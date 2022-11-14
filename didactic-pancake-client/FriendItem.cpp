@@ -8,6 +8,8 @@
 #include <QContextMenuEvent>
 #include <vector>
 
+#include "Config.h"
+
 using namespace std;
 
 FriendItem::FriendItem(QWidget *parent, const QString &username) : QWidget(parent),
@@ -29,6 +31,23 @@ FriendItem::~FriendItem()
     delete ui;
 }
 
+void FriendItem::updateAvatar()
+{
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34/" + m_username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix);
+    ui->lbl_user_avatar->setScaledContents(true);
+}
+
 void FriendItem::initThis()
 {
     //设置为无边框窗口
@@ -40,7 +59,18 @@ void FriendItem::initThis()
 
 void FriendItem::initControl()
 {
-    ui->lbl_user_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
+    QPixmap pix;
+    QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34/" + m_username + ".png");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        pix.loadFromData(file.readAll());
+        file.close();
+    }
+    else
+    {
+        pix.load(":/resource/default_avatar.png");
+    }
+    ui->lbl_user_avatar->setPixmap(pix);
     ui->lbl_user_avatar->setScaledContents(true);
 
     ui->lbl_user_name->setText(m_username);
@@ -162,6 +192,17 @@ void FriendListWidget::deleteFriendItem(const QString &username)
             }
             m_items.erase(m_items.begin() + i);
             break;
+        }
+    }
+}
+
+void FriendListWidget::updateFriendItemAvatar(const QString &username)
+{
+    for (int i = 0; i < (int)m_items.size(); ++i)
+    {
+        if (m_items[i].second->m_username.compare(username) == 0)
+        {
+            m_items[i].second->updateAvatar();
         }
     }
 }

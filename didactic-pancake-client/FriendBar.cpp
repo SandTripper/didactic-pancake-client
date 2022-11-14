@@ -48,6 +48,11 @@ FriendListWidget *FriendBar::getListWidget()
     return ui->listWidget;
 }
 
+void FriendBar::handleFriendAvatarChanged(const QString &username)
+{
+    ui->listWidget->updateFriendItemAvatar(username);
+}
+
 void FriendBar::handleGFIpackAdd()
 {
     for (const auto &data : m_connect->vec[TcpConnect::GFI])

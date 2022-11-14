@@ -27,8 +27,6 @@ public:
 
     //读缓冲区的大小
     static const int READ_BUFFER_SIZE = 1024;
-    //写缓冲区的大小
-    static const int WRITE_BUFFER_SIZE = 1024;
 
     /*数据包类型
      HBT表示发送心跳包；
@@ -46,6 +44,8 @@ public:
      SMA表示发送消息；
      RMA表示接收消息；
      RDY表示服务器端就绪；
+     SAV表示发送头像数据；
+     RAV表示接收头像数据；
      */
     enum PACKET_TYPE
     {
@@ -63,7 +63,9 @@ public:
         DFI,
         SMA,
         RMA,
-        RDY
+        RDY,
+        SAV,
+        RAV
     };
 
     /*主状态机的三种可能状态
@@ -118,7 +120,7 @@ public:
     ~TcpConnect();
 
     // request转const char*
-    const char *ReqToString(PACKET_TYPE r);
+    static const char *ReqToString(PACKET_TYPE r);
 
     //填充应答
     bool write_data(const DataPacket &data);
@@ -148,14 +150,6 @@ private:
     char *get_line();
     LINE_STATUS parse_line();
 
-    //下面这一组函数被process_write调用以生成数据包
-    bool add_response(const char *format, ...);
-    bool add_content(const char *content);
-    bool add_headers(int content_length);
-    bool add_status_line(const char *status);
-    bool add_content_length(int content_length);
-    bool add_blank_line();
-
 signals:
     void LGNpackAdd();
     void RGTpackAdd();
@@ -169,6 +163,8 @@ signals:
     void DFIpackAdd();
     void SMApackAdd();
     void RMApackAdd();
+    void SAVpackAdd();
+    void RAVpackAdd();
 
     //断线
     void disconnected();
@@ -204,20 +200,8 @@ private:
     //当前正在解析的行的起始位置
     int m_start_line;
 
-    //写缓冲区
-    char m_write_buf[WRITE_BUFFER_SIZE];
-
-    //写缓冲区中待发送的字节数
-    int m_write_idx;
-
     //主状态机当前所处的状态
     CHECK_STATE m_check_state;
-
-    //需要发送的字节数
-    int m_bytes_to_send;
-
-    //已经发送的字节数
-    int m_bytes_have_send;
 
     //数据包类型
     PACKET_TYPE m_method;
@@ -242,7 +226,7 @@ public:
     DataPacket()
     {
         category = TcpConnect::HBT;
-        content = NULL;
+        content = nullptr;
         content_len = 0;
     }
     DataPacket(TcpConnect::PACKET_TYPE cat, const char *con)
@@ -250,7 +234,7 @@ public:
         category = cat;
         content_len = strlen(con);
         content = new char[content_len + 1];
-        strncpy(content, con, content_len);
+        memcpy(content, con, content_len);
         content[content_len] = '\0';
     }
     DataPacket(TcpConnect::PACKET_TYPE cat, int conlen, const char *con)
@@ -258,7 +242,7 @@ public:
         category = cat;
         content_len = conlen;
         content = new char[conlen + 1];
-        strncpy(content, con, conlen);
+        memcpy(content, con, conlen);
         content[content_len] = '\0';
     }
     DataPacket(const DataPacket &other)
@@ -266,12 +250,26 @@ public:
         category = other.category;
         content_len = other.content_len;
         content = new char[content_len + 1];
-        strncpy(content, other.content, content_len);
+        memcpy(content, other.content, content_len);
         content[content_len] = '\0';
     }
     ~DataPacket()
     {
         delete[] content;
+    }
+    static int get_format(const DataPacket &pack, char *&format_pack)
+    {
+        std::string type_head_str = TcpConnect::ReqToString(pack.category);
+        type_head_str += "\r\nContent-Length: ";
+        type_head_str += std::to_string(pack.content_len);
+        type_head_str += "\r\n\r\n";
+        int type_head_str_len = type_head_str.length();
+
+        format_pack = new char[type_head_str_len + pack.content_len + 1];
+        memcpy(format_pack, type_head_str.c_str(), type_head_str_len);
+        memcpy(format_pack + type_head_str_len, pack.content, pack.content_len);
+        format_pack[type_head_str_len + pack.content_len] = '\0';
+        return type_head_str_len + pack.content_len;
     }
     TcpConnect::PACKET_TYPE category;
     int content_len;

@@ -10,12 +10,14 @@
 #include <QFontDatabase>
 #include <QTimer>
 #include <tuple>
+#include <QApplication>
 
 #include "AutoWrapLabel.h"
+#include "Config.h"
 
 using namespace std;
 
-MessageItem::MessageItem(QWidget *parent) : QWidget(parent)
+MessageItem::MessageItem(const QString &tarUserName, QWidget *parent) : QWidget(parent), m_tarUserName(tarUserName)
 {
     QFont te_font = this->font();
     te_font.setFamily("Microsoft YaHei");
@@ -83,17 +85,42 @@ void MessageItem::setText(QString text, QString time, QSize allSize, MessageItem
 
         m_lbl_avatar->move(m_iconRightRect.x(), m_iconRightRect.y());
         m_lbl_avatar->setFixedSize(m_iconRightRect.width(), m_iconRightRect.height());
-        m_lbl_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
+
+        QPixmap pix;
+        QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34/" + Config::loginedUserName + ".png");
+        if (file.open(QIODevice::ReadOnly))
+        {
+            pix.loadFromData(file.readAll());
+            file.close();
+        }
+        else
+        {
+            pix.load(":/resource/default_avatar.png");
+        }
+        m_lbl_avatar->setPixmap(pix);
     }
     else if (userType == User_She)
     {
+
         m_lbl_text->move(m_textLeftRect.x(), m_textLeftRect.y());
         m_lbl_text->setFixedSize(m_textLeftRect.width(), m_textLeftRect.height());
         m_lbl_text->setText(text);
 
         m_lbl_avatar->move(m_iconLeftRect.x(), m_iconLeftRect.y());
         m_lbl_avatar->setFixedSize(m_iconLeftRect.width(), m_iconLeftRect.height());
-        m_lbl_avatar->setPixmap(QPixmap(":/resource/default_avatar.png"));
+
+        QPixmap pix;
+        QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34/" + m_tarUserName + ".png");
+        if (file.open(QIODevice::ReadOnly))
+        {
+            pix.loadFromData(file.readAll());
+            file.close();
+        }
+        else
+        {
+            pix.load(":/resource/default_avatar.png");
+        }
+        m_lbl_avatar->setPixmap(pix);
     }
     else
     {
@@ -170,6 +197,40 @@ QSize MessageItem::fontRect(QString str)
                             m_kuangRightRect.width() - 2 * textSpaceRect, m_kuangRightRect.height() - 2 * iconTMPH);
 
     return QSize(size.width(), hei);
+}
+
+void MessageItem::updateAvatar()
+{
+    if (m_userType == User_Type::User_Me)
+    {
+        QPixmap pix;
+        QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34/" + Config::loginedUserName + ".png");
+        if (file.open(QIODevice::ReadOnly))
+        {
+            pix.loadFromData(file.readAll());
+            file.close();
+        }
+        else
+        {
+            pix.load(":/resource/default_avatar.png");
+        }
+        m_lbl_avatar->setPixmap(pix);
+    }
+    else if (m_userType == User_Type::User_She)
+    {
+        QPixmap pix;
+        QFile file(QApplication::applicationDirPath() + "/" + Config::loginedUserName + "/datas/avatar/34x34/" + m_tarUserName + ".png");
+        if (file.open(QIODevice::ReadOnly))
+        {
+            pix.loadFromData(file.readAll());
+            file.close();
+        }
+        else
+        {
+            pix.load(":/resource/default_avatar.png");
+        }
+        m_lbl_avatar->setPixmap(pix);
+    }
 }
 
 QSize MessageItem::getRealString(QString src)
@@ -440,7 +501,7 @@ int MessageListWidget::loadMessage()
     {
         if (insertTimeMessage(QString::number(get<2>(msg) / 1000), lineCnt))
             ++lineCnt;
-        MessageItem *messageW = new MessageItem();
+        MessageItem *messageW = new MessageItem(m_tarUserName);
         QListWidgetItem *item = new QListWidgetItem();
         insertItem(lineCnt, item);
         messageW->setFixedWidth(this->width());
@@ -484,7 +545,7 @@ MessageItem *MessageListWidget::addMyMessage(const QString &msg)
     QString time = QString::number(QDateTime::currentDateTime().toTime_t()); //时间戳
     addTimeMessage(time);
 
-    MessageItem *messageW = new MessageItem();
+    MessageItem *messageW = new MessageItem(m_tarUserName);
     QListWidgetItem *item = new QListWidgetItem();
 
     addItem(item);
@@ -514,7 +575,7 @@ void MessageListWidget::addOtherMessage(const QString &msg, long long l_time)
     QString time = QString::number(l_time / 1000); //时间戳
     addTimeMessage(time);
 
-    MessageItem *messageW = new MessageItem();
+    MessageItem *messageW = new MessageItem(m_tarUserName);
     QListWidgetItem *item = new QListWidgetItem();
     addItem(item);
 
@@ -552,7 +613,7 @@ void MessageListWidget::addTimeMessage(QString curMsgTime)
     }
     if (isShowTime)
     {
-        MessageItem *messageTime = new MessageItem();
+        MessageItem *messageTime = new MessageItem(m_tarUserName);
         QListWidgetItem *itemTime = new QListWidgetItem();
         addItem(itemTime);
         QSize size = QSize(this->width(), 40);
@@ -583,7 +644,7 @@ bool MessageListWidget::insertTimeMessage(QString curMsgTime, int row)
     }
     if (isShowTime)
     {
-        MessageItem *messageTime = new MessageItem();
+        MessageItem *messageTime = new MessageItem(m_tarUserName);
 
         QListWidgetItem *itemTime = new QListWidgetItem();
 
@@ -600,7 +661,7 @@ bool MessageListWidget::insertTimeMessage(QString curMsgTime, int row)
 
 QListWidgetItem *MessageListWidget::addLoadMessage()
 {
-    MessageItem *messageLoad = new MessageItem();
+    MessageItem *messageLoad = new MessageItem(m_tarUserName);
     QListWidgetItem *itemLoad = new QListWidgetItem();
     insertItem(0, itemLoad);
     QSize size = QSize(this->width(), 30);
@@ -609,4 +670,26 @@ QListWidgetItem *MessageListWidget::addLoadMessage()
     messageLoad->setText("", "", size, MessageItem::User_Load);
     setItemWidget(itemLoad, messageLoad);
     return itemLoad;
+}
+
+void MessageListWidget::updateMyAvatar()
+{
+    for (int i = 0; i < (int)m_items.size(); ++i)
+    {
+        if (m_items[i].second->userType() == MessageItem::User_Me)
+        {
+            m_items[i].second->updateAvatar();
+        }
+    }
+}
+
+void MessageListWidget::updateTargetAvatar()
+{
+    for (int i = 0; i < (int)m_items.size(); ++i)
+    {
+        if (m_items[i].second->userType() == MessageItem::User_She)
+        {
+            m_items[i].second->updateAvatar();
+        }
+    }
 }

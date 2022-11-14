@@ -33,6 +33,10 @@ public:
     //是否是最大化窗口
     bool m_isMaxWindow;
 
+signals:
+    //好友头像更改
+    void friendAvatarChanged(const QString &username);
+
 protected:
     // 状态栏背景色;
     int m_colorR;

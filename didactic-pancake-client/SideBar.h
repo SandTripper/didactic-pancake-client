@@ -38,6 +38,11 @@ signals:
     void changeToChat();
     //切换到好友界面
     void changeToFriend();
+    //关闭信号
+    void closed();
+
+    //用户头像更改
+    void myAvatarChanged();
 
 protected:
     // 侧边栏背景色;
@@ -50,6 +55,10 @@ private:
     void initThis();
     // 初始化控件;
     void initControl();
+
+    //更新用户头像
+    void updateAvatar();
+
     //重写paintEvent事件
     void paintEvent(QPaintEvent *event);
 
@@ -57,6 +66,10 @@ private:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+
+private slots:
+    void on_change_avatar_triggered();
+    void on_lbl_user_avatar_clicked();
 
 private:
     // 移动窗口的变量;
@@ -68,6 +81,9 @@ private:
 
     //未读消息数目
     int m_unreadNum;
+
+    //头像右键的更换头像动作
+    QAction *m_changeAvatarAction;
 };
 
 #endif // SIDEBAR_H

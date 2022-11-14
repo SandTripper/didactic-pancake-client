@@ -25,6 +25,8 @@ SOURCES += \
     BaseWindow.cpp \
     ChatBar.cpp \
     ChatItem.cpp \
+    Config.cpp \
+    FileProcess.cpp \
     FriendBar.cpp \
     FriendInformation.cpp \
     FriendItem.cpp \
@@ -35,9 +37,11 @@ SOURCES += \
     MessageBar.cpp \
     MessageItem.cpp \
     MessageWidget.cpp \
+    PictureViewingWindow.cpp \
     RedPoint.cpp \
     RegisterWindow.cpp \
     SQLConnect.cpp \
+    SelectNewAvatarWindow.cpp \
     SideBar.cpp \
     SoundPlayer.cpp \
     StatusBar.cpp \
@@ -53,7 +57,9 @@ HEADERS += \
     BaseWindow.h \
     ChatBar.h \
     ChatItem.h \
+    Config.h \
     CustomMainWindow.h \
+    FileProcess.h \
     FriendBar.h \
     FriendInformation.h \
     FriendItem.h \
@@ -64,9 +70,11 @@ HEADERS += \
     MessageBar.h \
     MessageItem.h \
     MessageWidget.h \
+    PictureViewingWindow.h \
     RedPoint.h \
     RegisterWindow.h \
     SQLConnect.h \
+    SelectNewAvatarWindow.h \
     SideBar.h \
     SoundPlayer.h \
     StatusBar.h \
@@ -86,7 +94,9 @@ FORMS += \
     LoginWindow.ui \
     MessageBar.ui \
     MessageWidget.ui \
+    PictureViewingWindow.ui \
     RegisterWindow.ui \
+    SelectNewAvatarWindow.ui \
     SideBar.ui \
     StatusBar.ui
 
