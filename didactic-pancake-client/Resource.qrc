@@ -34,5 +34,36 @@
         <file>resource/btn_emoji_press.png</file>
         <file>resource/loading.gif</file>
         <file>resource/message_tone.wav</file>
+        <file>resource/btn_video_chat_hover.png</file>
+        <file>resource/btn_video_chat_normal.png</file>
+        <file>resource/btn_video_chat_press.png</file>
+        <file>resource/btn_voice_chat_normal.png</file>
+        <file>resource/btn_voice_chat_press.png</file>
+        <file>resource/btn_voice_chat_hover.png</file>
+        <file>resource/btn_hang_up_hover.png</file>
+        <file>resource/btn_hang_up_normal.png</file>
+        <file>resource/btn_hang_up_press.png</file>
+        <file>resource/m_btn_close_normal.png</file>
+        <file>resource/m_btn_min_press.png</file>
+        <file>resource/m_btn_min_normal.png</file>
+        <file>resource/lbl_voice_chat_wait_ball_type1.png</file>
+        <file>resource/lbl_voice_chat_wait_ball_type2.png</file>
+        <file>resource/lbl_voice_chat_wait_ball_type3.png</file>
+        <file>resource/video_chat_btn_accept_hover.png</file>
+        <file>resource/video_chat_btn_accept_normal.png</file>
+        <file>resource/video_chat_btn_accept_press.png</file>
+        <file>resource/video_chat_btn_reject_hover.png</file>
+        <file>resource/video_chat_btn_reject_normal.png</file>
+        <file>resource/video_chat_btn_reject_press.png</file>
+        <file>resource/pancake.ico</file>
+        <file>resource/SourceHanSansCN-Normal.otf</file>
+        <file>resource/video_chat_btn_accept_hover_60x60.png</file>
+        <file>resource/video_chat_btn_accept_normal_60x60.png</file>
+        <file>resource/video_chat_btn_accept_press_60x60.png</file>
+        <file>resource/video_chat_btn_reject_hover_60x60.png</file>
+        <file>resource/video_chat_btn_reject_normal_60x60.png</file>
+        <file>resource/video_chat_btn_reject_press_60x60.png</file>
+        <file>resource/hang_up_ring.wav</file>
+        <file>resource/voice_chat_ring.wav</file>
     </qresource>
 </RCC>

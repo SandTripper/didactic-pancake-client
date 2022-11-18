@@ -5,6 +5,7 @@
 
 #include "MessageItem.h"
 #include "TcpConnect.h"
+#include "VoiceChatWindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -53,6 +54,13 @@ protected:
 
 private slots:
     void on_btn_send_clicked();
+
+    void on_btn_voice_chat_clicked();
+
+    void on_btn_video_chat_clicked();
+
+    //处理语音聊天窗口退出
+    void handleVoiceChatWindowClosed(VoiceChatWindow::CLOSE_TYPE type,const QString& formatTime);
 
 private:
     //初始化本窗口

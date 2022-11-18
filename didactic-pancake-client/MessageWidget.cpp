@@ -5,16 +5,17 @@
 #include "ui_MessageWidget.h"
 #include "SuspendedScrollbar.h"
 #include "SQLConnect.h"
+#include "Config.h"
 
 using namespace std;
 
 map<long long, MessageItem *> MessageWidget::m_sendingMessage;
 
 MessageWidget::MessageWidget(QString username, QWidget *parent) : QWidget(parent),
-                                                                  m_colorR(245), m_colorG(245), m_colorB(245),
-                                                                  ui(new Ui::MessageWidget),
-                                                                  m_connect(TcpConnect::getInstance()),
-                                                                  m_tarUserName(username)
+    m_colorR(245), m_colorG(245), m_colorB(245),
+    ui(new Ui::MessageWidget),
+    m_connect(TcpConnect::getInstance()),
+    m_tarUserName(username)
 {
     ui->setupUi(this);
     initThis();
@@ -32,7 +33,7 @@ void MessageWidget::initThis()
     setWindowFlags(Qt::FramelessWindowHint);
 
     connect(ui->listWidget, &MessageListWidget::addMsg, [=](const QString &content, long long l_time)
-            { emit messageAdd(m_tarUserName, content, l_time); });
+    { emit messageAdd(m_tarUserName, content, l_time); });
 }
 
 void MessageWidget::initControl()
@@ -40,34 +41,52 @@ void MessageWidget::initControl()
 
     //发送按钮
     QString qss_btn_send =
-        "QPushButton{background-color:rgb(233,233,233);}" //按钮颜色
-        "QPushButton{color: rgb(7,193,96); }"             //文字颜色
-        "QPushButton{border-radius: 4px;}"                //圆角半径
-        "QPushButton:hover{background-color:rgb(210,210,210);}"
-        "QPushButton:hover{color: rgb(7,193,96); }"
-        "QPushButton:hover{border-radius: 4px;}"
-        "QPushButton:pressed{background-color:rgb(198,198,198);}"
-        "QPushButton:pressed{color: rgb(7,193,96); }"
-        "QPushButton:pressed{border-radius: 4px;}";
+            "QPushButton{background-color:rgb(233,233,233);}" //按钮颜色
+            "QPushButton{color: rgb(7,193,96); }"             //文字颜色
+            "QPushButton{border-radius: 4px;}"                //圆角半径
+            "QPushButton:hover{background-color:rgb(210,210,210);}"
+            "QPushButton:hover{color: rgb(7,193,96); }"
+            "QPushButton:hover{border-radius: 4px;}"
+            "QPushButton:pressed{background-color:rgb(198,198,198);}"
+            "QPushButton:pressed{color: rgb(7,193,96); }"
+            "QPushButton:pressed{border-radius: 4px;}";
     ui->btn_send->setStyleSheet(qss_btn_send);
 
     //输入框
     QString qss_edit_input =
-        "QTextEdit{background-color:rgb(245,245,245);}"
-        "QTextEdit{padding-left: 1px; }"
-        "QTextEdit{border: 0px;}";
+            "QTextEdit{background-color:rgb(245,245,245);}"
+            "QTextEdit{padding-left: 1px; }"
+            "QTextEdit{border: 0px;}";
     ui->edit_input->setStyleSheet(qss_edit_input);
     //设置鼠标滚轮速度
     ui->edit_input->verticalScrollBar()->setSingleStep(7);
 
     //表情按钮
     QString qss_btn_emoji =
-        "QPushButton{border-image: url(:/resource/btn_emoji_normal.png)}"         //默认
-        "QPushButton:hover{border-image: url(:/resource/btn_emoji_hover.png)}"    //鼠标hover
-        "QPushButton:pressed{border-image: url(:/resource/btn_emoji_press.png)}"; //鼠标点击
+            "QPushButton{border-image: url(:/resource/btn_emoji_normal.png)}"         //默认
+            "QPushButton:hover{border-image: url(:/resource/btn_emoji_hover.png)}"    //鼠标hover
+            "QPushButton:pressed{border-image: url(:/resource/btn_emoji_press.png)}"; //鼠标点击
     ui->btn_emoji->setStyleSheet(qss_btn_emoji);
     ui->btn_emoji->setToolTip(QStringLiteral("表情"));
     ui->btn_emoji->setCursor(QCursor(Qt::PointingHandCursor));
+
+    //语音聊天按钮
+    QString qss_btn_voice_chat =
+            "QPushButton{border-image: url(:/resource/btn_voice_chat_normal.png)}"         //默认
+            "QPushButton:hover{border-image: url(:/resource/btn_voice_chat_hover.png)}"    //鼠标hover
+            "QPushButton:pressed{border-image: url(:/resource/btn_voice_chat_press.png)}"; //鼠标点击
+    ui->btn_voice_chat->setStyleSheet(qss_btn_voice_chat);
+    ui->btn_voice_chat->setToolTip(QStringLiteral("语音聊天"));
+    ui->btn_voice_chat->setCursor(QCursor(Qt::PointingHandCursor));
+
+    //视频通话按钮
+    QString qss_btn_video_chat =
+            "QPushButton{border-image: url(:/resource/btn_video_chat_normal.png)}"         //默认
+            "QPushButton:hover{border-image: url(:/resource/btn_video_chat_hover.png)}"    //鼠标hover
+            "QPushButton:pressed{border-image: url(:/resource/btn_video_chat_press.png)}"; //鼠标点击
+    ui->btn_video_chat->setStyleSheet(qss_btn_video_chat);
+    ui->btn_video_chat->setToolTip(QStringLiteral("视频聊天"));
+    ui->btn_video_chat->setCursor(QCursor(Qt::PointingHandCursor));
 
     ui->listWidget->m_tarUserName = m_tarUserName;
 }
@@ -96,7 +115,6 @@ void MessageWidget::messageHasSend(long long id)
     auto it = m_sendingMessage.find(id);
     if (it != m_sendingMessage.end())
     {
-        SQLConnect::getInstance()->setChatRecordisSend(id, 1);
         m_sendingMessage[id]->setTextSuccess();
         m_sendingMessage.erase(it);
     }
@@ -175,3 +193,51 @@ void MessageWidget::on_btn_send_clicked()
 
     ui->edit_input->setFocus();
 }
+
+void MessageWidget::on_btn_voice_chat_clicked()
+{
+    if(Config::isVoiceChatting)
+        return;
+    Config::isVoiceChatting = true;
+    VoiceChatWindow *vcw = new VoiceChatWindow(m_tarUserName,VoiceChatWindow::WAITING_FOR_ACCEPT);
+    vcw->move(Config::mainWindowPosX+200,Config::mainWindowPosY+30);
+    vcw->show();
+
+    connect(vcw,&VoiceChatWindow::closed,this,&MessageWidget::handleVoiceChatWindowClosed);
+
+    string content = m_tarUserName.toStdString()+"\r\n";
+
+    m_connect->write_data(DataPacket(TcpConnect::SOC,content.length(),content.c_str()));
+}
+
+void MessageWidget::on_btn_video_chat_clicked()
+{
+}
+
+void MessageWidget::handleVoiceChatWindowClosed(VoiceChatWindow::CLOSE_TYPE type, const QString &formatTime)
+{
+    Config::isVoiceChatting = false;
+    QString content;
+    switch (type)
+    {
+    case VoiceChatWindow::NORMAL_CALL:
+        content = "通话时长 "+formatTime+" ☏";
+        break;
+    case VoiceChatWindow::FRIEND_OFFLINE:
+        content = "对方不在线 ☏";
+        break;
+    case VoiceChatWindow::FRIEND_REJECT:
+        content = "对方已拒绝 ☏";
+        break;
+    case VoiceChatWindow::FRIEND_BUSY:
+        content = "对方忙 ☏";
+        break;
+    case VoiceChatWindow::CANCEL:
+        content = "已取消 ☏";
+        break;
+    default:
+        return;
+    }
+    ui->listWidget->addMyMessage(content)->setTextSuccess();
+}
+

@@ -94,3 +94,15 @@ Todo
   
 ![](/introduction/PictureViewingWindow.jpg)
 
+* 发起语音聊天界面
+  
+![](/introduction/VoiceChatWaiting.png)
+
+* 语音聊天是否接听界面
+  
+![](/introduction/VoiceChatChoose.png)
+
+* 正在语音聊天界面
+  
+![](/introduction/VoiceChatting.png)
+

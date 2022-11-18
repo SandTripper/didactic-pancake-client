@@ -38,6 +38,9 @@ protected:
     //重写关闭事件
     void closeEvent(QCloseEvent *event);
 
+    //重写移动事件
+    void moveEvent(QMoveEvent *event);
+
 private:
     //初始化本窗口
     void initThis();

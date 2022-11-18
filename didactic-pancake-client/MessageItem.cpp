@@ -46,6 +46,7 @@ MessageItem::MessageItem(const QString &tarUserName, QWidget *parent) : QWidget(
 
 void MessageItem::setTextSuccess()
 {
+    SQLConnect::getInstance()->setChatRecordisSend(message_id, 1);
     m_loading->hide();
     m_loadingMovie->stop();
     m_isSending = true;

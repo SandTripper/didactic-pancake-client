@@ -401,9 +401,13 @@ void ChatListWidget::selectChatItem(const QString &username)
             m_items[i].second->clearUnreadNum();
             SQLConnect::getInstance()->setChatItem(m_items[i].second->m_username, m_items[i].second->m_lastTime, m_items[i].second->m_unreadNum, m_items[i].second->m_content, 1);
             this->setCurrentRow(i);
-            break;
+            return;
         }
     }
+
+    //如果不存在该item
+    addChatItem(username);
+    selectChatItem(username);
 }
 
 void ChatListWidget::hideChatItem(const QString &username)

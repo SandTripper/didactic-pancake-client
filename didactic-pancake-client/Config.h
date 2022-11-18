@@ -18,6 +18,13 @@ public:
 
     //已打开的图片查看器
     static std::list<PictureViewingWindow *> openedPictureViewingWindow;
+
+    //主窗口的x坐标
+    static int mainWindowPosX;
+    //主窗口的y坐标
+    static int mainWindowPosY;
+
+    static bool isVoiceChatting;
 };
 
 #endif // CONFIG_H

@@ -1,13 +1,13 @@
-/.vscode/
+#/.vscode/
 
-# /.VSCodeCounter/
+/.VSCodeCounter/
 
-# /build-debug/
+/build-debug/
 
-# /build-release/
+/build-release/
 
-# .gitignore
+.gitignore
 
 /Release
 
---SQLite.sql
+#--SQLite.sql

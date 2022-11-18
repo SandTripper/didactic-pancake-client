@@ -39,6 +39,9 @@ public:
     // 设置标题栏上按钮类型;
     void setButtonType(ButtonType buttonType);
 
+    //设置四个按钮的样式
+    void setButtonStyle(const QString&qss_btn_min,const QString&qss_btn_restore,const QString&qss_btn_max,const QString&qss_btn_close);
+
     // 保存/获取 最大化前窗口的位置及大小;
     void saveRestoreInfo(const QPoint point, const QSize size);
     void getRestoreInfo(QPoint &point, QSize &size);

@@ -47,6 +47,8 @@ SOURCES += \
     StatusBar.cpp \
     SuspendedScrollbar.cpp \
     TcpConnect.cpp \
+    VoiceChat.cpp \
+    VoiceChatWindow.cpp \
     main.cpp \
     CustomMainWindow.cpp
 
@@ -79,7 +81,9 @@ HEADERS += \
     SoundPlayer.h \
     StatusBar.h \
     SuspendedScrollbar.h \
-    TcpConnect.h
+    TcpConnect.h \
+    VoiceChat.h \
+    VoiceChatWindow.h
 
 FORMS += \
     AddFriendWindow.ui \
@@ -98,7 +102,8 @@ FORMS += \
     RegisterWindow.ui \
     SelectNewAvatarWindow.ui \
     SideBar.ui \
-    StatusBar.ui
+    StatusBar.ui \
+    VoiceChatWindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

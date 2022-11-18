@@ -170,6 +170,14 @@ void BaseTitleBar::setButtonType(ButtonType buttonType)
     }
 }
 
+void BaseTitleBar::setButtonStyle(const QString &qss_btn_min, const QString &qss_btn_restore, const QString &qss_btn_max, const QString &qss_btn_close)
+{
+    m_pButtonMin->setStyleSheet(qss_btn_min);
+    m_pButtonRestore->setStyleSheet(qss_btn_restore);
+    m_pButtonMax->setStyleSheet(qss_btn_max);
+    m_pButtonClose->setStyleSheet(qss_btn_close);
+}
+
 // 保存窗口最大化前窗口的位置以及大小;
 void BaseTitleBar::saveRestoreInfo(const QPoint point, const QSize size)
 {

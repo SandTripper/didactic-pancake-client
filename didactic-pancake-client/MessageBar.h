@@ -56,6 +56,11 @@ private slots:
 
     void handleSMApackAdd();
 
+    void handleROCpackAdd();
+
+    //处理语音聊天窗口退出
+    void handleVoiceChatWindowClosed(VoiceChatWindow::CLOSE_TYPE type,const QString& formatTime,const QString&username);
+
 private:
     //初始化本窗口
     void initThis();
@@ -72,9 +77,9 @@ private:
 
     QString nowUser;
 
-    TcpConnect *m_connect;
+    TcpConnect *m_tcpConnect;
 
-    SoundPlayer *m_soundPlayer;
+    SoundPlayer *m_soundNewMessage;
 };
 
 #endif // MESSAGEBAR_H

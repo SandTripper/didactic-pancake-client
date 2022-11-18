@@ -46,6 +46,11 @@ public:
      RDY表示服务器端就绪；
      SAV表示发送头像数据；
      RAV表示接收头像数据；
+     SOC表示发起语音聊天；
+     ROC表示回应语音聊天；
+     AOC表示开始语音聊天；
+     DOC表示结束语音聊天；
+     EOC表示挂断语音聊天
      */
     enum PACKET_TYPE
     {
@@ -65,7 +70,12 @@ public:
         RMA,
         RDY,
         SAV,
-        RAV
+        RAV,
+        SOC,
+        ROC,
+        AOC,
+        DOC,
+        EOC
     };
 
     /*主状态机的三种可能状态
@@ -165,6 +175,11 @@ signals:
     void RMApackAdd();
     void SAVpackAdd();
     void RAVpackAdd();
+    void SOCpackAdd();
+    void ROCpackAdd();
+    void AOCpackAdd();
+    void DOCpackAdd();
+    void EOCpackAdd();
 
     //断线
     void disconnected();

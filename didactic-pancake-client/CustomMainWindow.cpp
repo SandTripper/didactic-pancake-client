@@ -1,13 +1,15 @@
-#include <windows.h>
-
 #include "CustomMainWindow.h"
 #include "ui_CustomMainWindow.h"
+
+#include <windows.h>
+#include <QSoundEffect>
+#include <QMoveEvent>
+
 #include "LoginWindow.h"
 #include "SQLConnect.h"
 #include "Config.h"
 #include "PictureViewingWindow.h"
 
-#include <QSoundEffect>
 
 CustomMainWindow::CustomMainWindow(QWidget *parent) : BaseWindow(parent),
                                                       ui(new Ui::CustomMainWindow),
@@ -200,4 +202,11 @@ void CustomMainWindow::closeEvent(QCloseEvent *event)
         }
     }
     return BaseWindow::closeEvent(event);
+}
+
+void CustomMainWindow::moveEvent(QMoveEvent *event)
+{
+    Config::mainWindowPosX=event->pos().x();
+    Config::mainWindowPosY=event->pos().y();
+    return BaseWindow::moveEvent(event);
 }

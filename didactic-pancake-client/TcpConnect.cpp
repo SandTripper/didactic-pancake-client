@@ -150,6 +150,21 @@ void TcpConnect::read_handler()
             case RAV:
                 emit RAVpackAdd();
                 break;
+            case SOC:
+                emit SOCpackAdd();
+                break;
+            case ROC:
+                emit ROCpackAdd();
+                break;
+            case AOC:
+                emit AOCpackAdd();
+                break;
+            case DOC:
+                emit DOCpackAdd();
+                break;
+            case EOC:
+                emit EOCpackAdd();
+                break;
             default:
                 break;
             }
@@ -354,6 +369,26 @@ TcpConnect::RESULT_CODE TcpConnect::parse_type_line(char *text)
     {
         m_method = RAV;
     }
+    else if (strcasecmp(method, "SOC") == 0)
+    {
+        m_method = SOC;
+    }
+    else if (strcasecmp(method, "ROC") == 0)
+    {
+        m_method = ROC;
+    }
+    else if (strcasecmp(method, "AOC") == 0)
+    {
+        m_method = AOC;
+    }
+    else if (strcasecmp(method, "DOC") == 0)
+    {
+        m_method = DOC;
+    }
+    else if (strcasecmp(method, "EOC") == 0)
+    {
+        m_method = EOC;
+    }
     else
     {
         return BAD_REQUEST;
@@ -486,6 +521,16 @@ const char *TcpConnect::ReqToString(TcpConnect::PACKET_TYPE r)
         return "SAV";
     case RAV:
         return "RAV";
+    case SOC:
+        return "SOC";
+    case ROC:
+        return "ROC";
+    case AOC:
+        return "AOC";
+    case DOC:
+        return "DOC";
+    case EOC:
+        return "EOC";
     default:
         return "ERR";
     }

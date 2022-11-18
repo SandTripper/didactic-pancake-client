@@ -71,6 +71,32 @@
     <string/>
    </property>
   </widget>
+  <widget class="QPushButton" name="btn_voice_chat">
+   <property name="geometry">
+    <rect>
+     <x>319</x>
+     <y>319</y>
+     <width>25</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_video_chat">
+   <property name="geometry">
+    <rect>
+     <x>347</x>
+     <y>319</y>
+     <width>25</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
